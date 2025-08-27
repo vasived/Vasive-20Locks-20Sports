@@ -28,7 +28,7 @@ interface ExtendedPick extends Pick {
   created?: string;
 }
 
-const sports = ["All Sports", "NBA", "MLB", "NHL"];
+const sports = ["All Sports", "NBA", "MLB", "NHL", "NFL"];
 const sortOptions = [
   { value: "confidence", label: "Confidence (High to Low)" },
   { value: "tipoff", label: "Game Time (Earliest)" },
