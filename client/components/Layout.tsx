@@ -69,6 +69,7 @@ export default function Layout({ children }: LayoutProps) {
       icon: Settings,
       alwaysVisible: true,
     },
+    // Admin tab only for actual admins
     { name: "Admin", href: "/admin", icon: Shield, admin: true },
   ];
 
