@@ -5,17 +5,20 @@ This document explains how to manage user roles in Clerk Dashboard for the Vasiv
 ## Available Roles
 
 The platform supports two user roles:
+
 - **`admin`** - Full access to admin dashboard, can create/edit/delete picks
 - **`premium`** - Access to premium picks, bankroll management, and advanced analytics
 
 ## Setting Up Roles in Clerk Dashboard
 
 ### 1. Access Clerk Dashboard
+
 1. Go to [https://dashboard.clerk.com](https://dashboard.clerk.com)
 2. Sign in with your Clerk account
 3. Select your Vasive Locks project
 
 ### 2. Navigate to Users Section
+
 1. In the left sidebar, click on **"Users"**
 2. Find the user you want to assign a role to
 3. Click on the user to open their profile
@@ -29,12 +32,15 @@ Since the application checks for roles in `user.publicMetadata`, you'll need to 
 3. Add the role using one of these formats:
 
 #### Option A: Single Role (Recommended)
+
 ```json
 {
   "role": "admin"
 }
 ```
+
 or
+
 ```json
 {
   "role": "premium"
@@ -42,6 +48,7 @@ or
 ```
 
 #### Option B: Multiple Roles Array
+
 ```json
 {
   "roles": ["premium", "admin"]
@@ -53,6 +60,7 @@ or
 ## Pre-configured Admin User
 
 The following user has been configured as an admin:
+
 - **User ID**: `user_31s6AL1sBxq7Fg1P2e577W6ttGO`
 
 This user will have access to the admin dashboard at `/admin` once the database is properly connected.
@@ -109,18 +117,23 @@ function isPremiumUser(user: any): boolean {
 ## Troubleshooting
 
 ### User Not Getting Expected Access
+
 1. Check the exact user ID in Clerk Dashboard
 2. Verify the role is in **public metadata** (not private)
 3. Ensure the role name is exactly `"admin"` or `"premium"`
 4. Try refreshing the page or signing out/in again
 
 ### Database Issues
+
 If you see "database disconnected" or features not working:
+
 1. Set the `DATABASE_URL` environment variable with your Neon connection string
 2. Run the database initialization script: `cd server && npx tsx init-db.ts`
 
 ### Role Assignment Format
+
 The role can be assigned in either format:
+
 - Single role: `{"role": "admin"}`
 - Multiple roles: `{"roles": ["premium", "admin"]}`
 

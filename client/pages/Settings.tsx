@@ -49,7 +49,8 @@ export default function Settings() {
 
   useEffect(() => {
     // Check both privateMetadata and unsafeMetadata for bankroll
-    const bankrollValue = user?.privateMetadata?.bankroll || user?.unsafeMetadata?.bankroll;
+    const bankrollValue =
+      user?.privateMetadata?.bankroll || user?.unsafeMetadata?.bankroll;
     if (bankrollValue) {
       const currentBankroll = bankrollValue.toString();
       setBankroll(currentBankroll);
@@ -78,7 +79,7 @@ export default function Settings() {
         await user.reload();
 
         // Wait a bit longer to ensure the reload completes
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
         // Try privateMetadata first, fallback to unsafeMetadata if it fails
         let updateData;
@@ -90,7 +91,10 @@ export default function Settings() {
           };
           await user.update(updateData);
         } catch (privateError) {
-          console.warn("Private metadata update failed, trying unsafeMetadata:", privateError);
+          console.warn(
+            "Private metadata update failed, trying unsafeMetadata:",
+            privateError,
+          );
           // Fallback to unsafeMetadata
           updateData = {
             unsafeMetadata: {
@@ -108,17 +112,20 @@ export default function Settings() {
 
         // Clear success message after 3 seconds
         setTimeout(() => setSaveMessage(null), 3000);
-
       } catch (error) {
-        console.error(`Error updating bankroll (attempt ${retryCount + 1}):`, error);
+        console.error(
+          `Error updating bankroll (attempt ${retryCount + 1}):`,
+          error,
+        );
 
         // Check if it's a stream error and we can retry
-        const isStreamError = error instanceof Error &&
+        const isStreamError =
+          error instanceof Error &&
           (error.message.includes("stream") || error.message.includes("body"));
 
         if (isStreamError && retryCount < 2) {
           // Wait longer and retry
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
           return attemptUpdate(retryCount + 1);
         }
 
@@ -144,8 +151,13 @@ export default function Settings() {
   };
 
   const hasChanges = bankroll !== originalBankroll;
-  const currentBankrollValue = parseFloat(originalBankroll) ||
-    parseFloat(user?.privateMetadata?.bankroll?.toString() || user?.unsafeMetadata?.bankroll?.toString() || "0");
+  const currentBankrollValue =
+    parseFloat(originalBankroll) ||
+    parseFloat(
+      user?.privateMetadata?.bankroll?.toString() ||
+        user?.unsafeMetadata?.bankroll?.toString() ||
+        "0",
+    );
 
   if (!isSignedIn) {
     return (
@@ -160,7 +172,8 @@ export default function Settings() {
               </div>
               <CardTitle className="text-2xl">Access Your Settings</CardTitle>
               <p className="text-muted-foreground">
-                Sign in to manage your account, bankroll, and betting preferences.
+                Sign in to manage your account, bankroll, and betting
+                preferences.
               </p>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -191,7 +204,8 @@ export default function Settings() {
                   </Button>
                 </SignInButton>
                 <p className="text-sm text-muted-foreground">
-                  Don't have an account? Sign up to get started with premium features.
+                  Don't have an account? Sign up to get started with premium
+                  features.
                 </p>
               </div>
             </CardContent>
@@ -283,7 +297,10 @@ export default function Settings() {
                   <DollarSign className="h-5 w-5 text-green-500" />
                   Bankroll Management
                   {!isPremium && (
-                    <Badge variant="outline" className="border-brand-purple text-brand-purple">
+                    <Badge
+                      variant="outline"
+                      className="border-brand-purple text-brand-purple"
+                    >
                       <Lock className="h-3 w-3 mr-1" />
                       Premium Feature
                     </Badge>
@@ -326,23 +343,23 @@ export default function Settings() {
                           />
                         </div>
                         <Button
-                      onClick={handleSaveBankroll}
-                      disabled={!hasChanges || saving}
-                      className="flex items-center gap-2"
-                      type="button"
-                    >
-                      {saving ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="h-4 w-4" />
-                          Save
-                        </>
-                      )}
-                    </Button>
+                          onClick={handleSaveBankroll}
+                          disabled={!hasChanges || saving}
+                          className="flex items-center gap-2"
+                          type="button"
+                        >
+                          {saving ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                              Saving...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="h-4 w-4" />
+                              Save
+                            </>
+                          )}
+                        </Button>
                       </div>
                     </div>
 
@@ -375,9 +392,12 @@ export default function Settings() {
                       <h4 className="font-medium mb-2">How it works:</h4>
                       <ul className="text-sm text-muted-foreground space-y-1">
                         <li>• Set your total betting bankroll amount</li>
-                        <li>• Premium picks will show recommended stake amounts</li>
                         <li>
-                          • Stakes are calculated as a percentage of your bankroll
+                          • Premium picks will show recommended stake amounts
+                        </li>
+                        <li>
+                          • Stakes are calculated as a percentage of your
+                          bankroll
                         </li>
                         <li>• This helps with proper bankroll management</li>
                       </ul>
@@ -390,9 +410,13 @@ export default function Settings() {
                         <Lock className="h-12 w-12 text-brand-purple" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-lg mb-2">Premium Feature Locked</h3>
+                        <h3 className="font-semibold text-lg mb-2">
+                          Premium Feature Locked
+                        </h3>
                         <p className="text-muted-foreground mb-4">
-                          Bankroll management is available to premium members. Join our Discord community to unlock this feature and get access to advanced stake calculations.
+                          Bankroll management is available to premium members.
+                          Join our Discord community to unlock this feature and
+                          get access to advanced stake calculations.
                         </p>
                       </div>
                       <Button

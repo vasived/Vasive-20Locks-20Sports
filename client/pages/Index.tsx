@@ -113,7 +113,10 @@ export default function Index() {
             </div>
 
             {/* Hero Visual - How It Works Preview */}
-            <div className="relative animate-slide-up" style={{ animationDelay: "200ms" }}>
+            <div
+              className="relative animate-slide-up"
+              style={{ animationDelay: "200ms" }}
+            >
               <div className="relative bg-gradient-to-br from-card to-muted/10 rounded-2xl p-8 border border-border/50 backdrop-blur-enhanced hover:scale-[1.01] transition-all duration-500">
                 <div className="absolute -inset-1 bg-gradient-to-br from-brand-blue/30 to-brand-purple/30 rounded-2xl blur opacity-60 group-hover:opacity-80 transition-opacity" />
                 <div className="relative space-y-6">
@@ -153,7 +156,12 @@ export default function Index() {
                         </div>
                         <span className="font-medium">Real-Time Updates</span>
                       </div>
-                      <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200">Live</Badge>
+                      <Badge
+                        variant="outline"
+                        className="bg-cyan-50 text-cyan-700 border-cyan-200"
+                      >
+                        Live
+                      </Badge>
                     </div>
                   </div>
                 </div>
@@ -177,7 +185,10 @@ export default function Index() {
           {loading ? (
             // Loading skeleton
             Array.from({ length: 6 }).map((_, index) => (
-              <Card key={index} className="animate-pulse backdrop-blur-sm border-border/50">
+              <Card
+                key={index}
+                className="animate-pulse backdrop-blur-sm border-border/50"
+              >
                 <CardHeader className="pb-3">
                   <div className="h-6 animate-shimmer rounded w-3/4"></div>
                   <div className="h-4 animate-shimmer rounded w-1/2 mt-2"></div>
@@ -191,10 +202,10 @@ export default function Index() {
           ) : freePicks.length > 0 ? (
             freePicks.slice(0, 6).map((pick, index) => (
               <Card
-              key={pick.id}
-              className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] animate-slide-up backdrop-blur-sm border-border/50"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
+                key={pick.id}
+                className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] animate-slide-up backdrop-blur-sm border-border/50"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">{pick.player}</CardTitle>
@@ -494,7 +505,9 @@ export default function Index() {
                   </div>
                 </div>
                 <div className="text-center space-y-2">
-                  <div className="text-2xl font-bold text-brand-purple">24/7</div>
+                  <div className="text-2xl font-bold text-brand-purple">
+                    24/7
+                  </div>
                   <div className="text-sm text-muted-foreground">
                     Expert Support
                   </div>
@@ -525,7 +538,8 @@ export default function Index() {
               </Button>
 
               <p className="text-sm text-muted-foreground">
-                Free to join • Premium roles available • Expert analysts active daily
+                Free to join • Premium roles available • Expert analysts active
+                daily
               </p>
             </div>
           </div>

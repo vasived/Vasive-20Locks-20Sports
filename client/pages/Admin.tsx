@@ -169,7 +169,7 @@ export default function Admin() {
   ) => {
     try {
       // Add to updating set
-      setUpdatingPicks(prev => new Set(prev).add(pickId));
+      setUpdatingPicks((prev) => new Set(prev).add(pickId));
 
       console.log("Updating pick with:", { pickId, updates });
       const response = await fetch(`/api/picks/${pickId}`, {
@@ -191,12 +191,15 @@ export default function Admin() {
       }
     } catch (error) {
       console.error("Error updating pick:", error);
-      setMessage({ type: "error", text: `Failed to update pick: ${error instanceof Error ? error.message : "Unknown error"}` });
+      setMessage({
+        type: "error",
+        text: `Failed to update pick: ${error instanceof Error ? error.message : "Unknown error"}`,
+      });
       // Clear message after 5 seconds
       setTimeout(() => setMessage(null), 5000);
     } finally {
       // Remove from updating set
-      setUpdatingPicks(prev => {
+      setUpdatingPicks((prev) => {
         const newSet = new Set(prev);
         newSet.delete(pickId);
         return newSet;
@@ -742,7 +745,9 @@ export default function Admin() {
                       }
                       disabled={updatingPicks.has(pick.id)}
                     >
-                      <SelectTrigger className={`w-[120px] ${updatingPicks.has(pick.id) ? 'opacity-50' : ''}`}>
+                      <SelectTrigger
+                        className={`w-[120px] ${updatingPicks.has(pick.id) ? "opacity-50" : ""}`}
+                      >
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

@@ -56,9 +56,11 @@ export default function PremiumPicks() {
   const [loading, setLoading] = useState(true);
 
   const isPremium = isSignedIn && isPremiumUser(user);
-  const bankroll = parseFloat(
-    (user?.privateMetadata?.bankroll || user?.unsafeMetadata?.bankroll) as string
-  ) || 0;
+  const bankroll =
+    parseFloat(
+      (user?.privateMetadata?.bankroll ||
+        user?.unsafeMetadata?.bankroll) as string,
+    ) || 0;
 
   useEffect(() => {
     const fetchPremiumPicks = async () => {
@@ -308,7 +310,10 @@ export default function PremiumPicks() {
         {loading ? (
           // Loading skeleton
           Array.from({ length: 4 }).map((_, index) => (
-            <Card key={index} className="animate-pulse border-brand-purple/20 backdrop-blur-sm">
+            <Card
+              key={index}
+              className="animate-pulse border-brand-purple/20 backdrop-blur-sm"
+            >
               <CardHeader className="pb-3">
                 <div className="h-6 animate-shimmer rounded w-3/4"></div>
                 <div className="h-4 animate-shimmer rounded w-1/2 mt-2"></div>
@@ -433,7 +438,6 @@ export default function PremiumPicks() {
           </div>
         )}
       </div>
-
     </div>
   );
 }
