@@ -171,7 +171,7 @@ async function initializeDatabase() {
 }
 
 // Run if called directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   initializeDatabase().then(() => {
     console.log("Database setup finished!");
     process.exit(0);
