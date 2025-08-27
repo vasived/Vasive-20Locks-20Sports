@@ -48,6 +48,7 @@ export default function Layout({ children }: LayoutProps) {
   const isPremium = isSignedIn && isPremiumUser(user);
 
   const navigation = [
+    { name: "Home", href: "/", icon: TrendingUp, public: true },
     { name: "Free Picks", href: "/free-picks", icon: TrendingUp, public: true },
     {
       name: "Premium Picks",
