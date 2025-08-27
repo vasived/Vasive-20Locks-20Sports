@@ -428,19 +428,6 @@ export default function PremiumPicks() {
         )}
       </div>
 
-      {/* Action Buttons */}
-      <div className="mt-8 text-center space-y-4">
-        <p className="text-muted-foreground">
-          This is a preview of premium features. Full functionality requires
-          authentication setup.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button variant="outline">Set Bankroll in Settings</Button>
-          <Button className="bg-gradient-to-r from-brand-purple to-brand-blue hover:from-brand-purple/90 hover:to-brand-blue/90">
-            View More Premium Picks
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }
