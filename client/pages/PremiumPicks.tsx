@@ -324,7 +324,7 @@ export default function PremiumPicks() {
           premiumPicks.map((pick, index) => (
             <Card
               key={pick.id}
-              className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-brand-purple/20"
+              className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.01] cursor-pointer border-brand-purple/20 hover:border-brand-purple/40 backdrop-blur-sm"
               onClick={() =>
                 setExpandedPick(expandedPick === pick.id ? null : pick.id)
               }
