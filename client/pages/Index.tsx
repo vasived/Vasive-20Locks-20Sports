@@ -13,14 +13,12 @@ import {
   Star,
   Zap,
 } from "lucide-react";
+import { Pick } from "@shared/api";
 
-// Mock data - replace with actual API calls
-const mockStats = {
-  todayGames: 12,
-  activePicks: 8,
-  winRate: 73,
-  subscribers: 2547,
-};
+interface Stats {
+  todayGames: number;
+  activePicks: number;
+}
 
 const mockSports = [
   { code: "nba", name: "NBA", active: true, games: 6 },
