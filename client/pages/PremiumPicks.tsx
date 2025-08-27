@@ -56,7 +56,11 @@ export default function PremiumPicks() {
   const [loading, setLoading] = useState(true);
 
   const isPremium = isSignedIn && isPremiumUser(user);
-  const bankroll = parseFloat(user?.privateMetadata?.bankroll as string) || 0;
+  const bankroll =
+    parseFloat(
+      (user?.privateMetadata?.bankroll ||
+        user?.unsafeMetadata?.bankroll) as string,
+    ) || 0;
 
   useEffect(() => {
     const fetchPremiumPicks = async () => {
@@ -102,16 +106,24 @@ export default function PremiumPicks() {
   function getResultBadge(result: string) {
     switch (result) {
       case "Win":
-        return <Badge className="bg-green-600 hover:bg-green-700">W</Badge>;
+        return (
+          <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 font-semibold shadow-lg">
+            ✓ WIN
+          </Badge>
+        );
       case "Loss":
-        return <Badge className="bg-red-600 hover:bg-red-700">L</Badge>;
+        return (
+          <Badge className="bg-gradient-to-r from-red-500 to-red-600 text-white border-0 font-semibold">
+            ✗ LOSS
+          </Badge>
+        );
       default:
         return (
           <Badge
             variant="outline"
-            className="border-yellow-500 text-yellow-600"
+            className="border-yellow-500 text-yellow-600 bg-yellow-50"
           >
-            Pending
+            ⏳ PENDING
           </Badge>
         );
     }
@@ -298,15 +310,18 @@ export default function PremiumPicks() {
         {loading ? (
           // Loading skeleton
           Array.from({ length: 4 }).map((_, index) => (
-            <Card key={index} className="animate-pulse border-brand-purple/20">
+            <Card
+              key={index}
+              className="animate-pulse border-brand-purple/20 backdrop-blur-sm"
+            >
               <CardHeader className="pb-3">
-                <div className="h-6 bg-muted rounded w-3/4"></div>
-                <div className="h-4 bg-muted rounded w-1/2"></div>
+                <div className="h-6 animate-shimmer rounded w-3/4"></div>
+                <div className="h-4 animate-shimmer rounded w-1/2 mt-2"></div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="h-16 bg-muted rounded"></div>
-                <div className="h-8 bg-muted rounded"></div>
-                <div className="h-12 bg-muted rounded"></div>
+                <div className="h-16 animate-shimmer rounded"></div>
+                <div className="h-8 animate-shimmer rounded"></div>
+                <div className="h-12 animate-shimmer rounded"></div>
               </CardContent>
             </Card>
           ))
@@ -314,7 +329,7 @@ export default function PremiumPicks() {
           premiumPicks.map((pick, index) => (
             <Card
               key={pick.id}
-              className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-brand-purple/20"
+              className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.01] cursor-pointer border-brand-purple/20 hover:border-brand-purple/40 backdrop-blur-sm"
               onClick={() =>
                 setExpandedPick(expandedPick === pick.id ? null : pick.id)
               }
@@ -332,8 +347,6 @@ export default function PremiumPicks() {
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
                       <span>{pick.game}</span>
-                      <span>•</span>
-                      <span>{pick.tipoff}</span>
                     </div>
                   </div>
 
@@ -344,7 +357,7 @@ export default function PremiumPicks() {
                         {pick.confidence}%
                       </span>
                     </div>
-                    <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-xs">
+                    <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-white border-0 text-xs">
                       Premium
                     </Badge>
                   </div>
@@ -359,7 +372,7 @@ export default function PremiumPicks() {
                       {pick.propType} {pick.side} {pick.line}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {pick.odds || "-110"} ��� {pick.sportsbook || "Various"}
+                      {pick.odds || "-110"} • {pick.sportsbook || "Various"}
                     </div>
                   </div>
                 </div>
@@ -424,20 +437,6 @@ export default function PremiumPicks() {
             </p>
           </div>
         )}
-      </div>
-
-      {/* Action Buttons */}
-      <div className="mt-8 text-center space-y-4">
-        <p className="text-muted-foreground">
-          This is a preview of premium features. Full functionality requires
-          authentication setup.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button variant="outline">Set Bankroll in Settings</Button>
-          <Button className="bg-gradient-to-r from-brand-purple to-brand-blue hover:from-brand-purple/90 hover:to-brand-blue/90">
-            View More Premium Picks
-          </Button>
-        </div>
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ interface ExtendedPick extends Pick {
   created?: string;
 }
 
-const sports = ["All Sports", "NBA", "MLB", "NHL"];
+const sports = ["All Sports", "NBA", "MLB", "NHL", "NFL"];
 const sortOptions = [
   { value: "confidence", label: "Confidence (High to Low)" },
   { value: "tipoff", label: "Game Time (Earliest)" },
@@ -254,7 +254,7 @@ export default function FreePicks() {
           filteredAndSortedPicks.map((pick, index) => (
             <Card
               key={pick.id}
-              className="group hover:shadow-lg transition-all duration-200 animate-slide-up cursor-pointer"
+              className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.01] animate-slide-up cursor-pointer backdrop-blur-sm border-border/50"
               style={{ animationDelay: `${index * 50}ms` }}
               onClick={() =>
                 setExpandedPick(expandedPick === pick.id ? null : pick.id)
@@ -272,8 +272,6 @@ export default function FreePicks() {
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
                       <span>{pick.gameShort || pick.game}</span>
-                      <span>•</span>
-                      <span>{formatGameTime(pick.tipoff)}</span>
                     </div>
                   </div>
 
@@ -337,7 +335,6 @@ export default function FreePicks() {
                   {expandedPick === pick.id && (
                     <div className="pt-2 border-t border-border">
                       <div className="text-xs text-muted-foreground space-y-1">
-                        <div>Venue: {pick.venue || "TBD"}</div>
                         {pick.odds && <div>Odds: {pick.odds}</div>}
                         {pick.sportsbook && (
                           <div>Sportsbook: {pick.sportsbook}</div>

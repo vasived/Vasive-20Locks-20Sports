@@ -73,10 +73,11 @@ export default function Admin() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [updatingPicks, setUpdatingPicks] = useState<Set<string>>(new Set());
 
   // Form state for create/edit
   const [formData, setFormData] = useState<Partial<CreatePickRequest>>({
-    sportCode: "nba",
+    sportCode: "NBA",
     tier: "free",
     player: "",
     propType: "",
@@ -167,21 +168,42 @@ export default function Admin() {
     updates: Partial<ExtendedPick>,
   ) => {
     try {
+      // Add to updating set
+      setUpdatingPicks((prev) => new Set(prev).add(pickId));
+
+      console.log("Updating pick with:", { pickId, updates });
       const response = await fetch(`/api/picks/${pickId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
       });
 
+      const responseData = await response.json();
+      console.log("Update response:", responseData);
+
       if (response.ok) {
         setMessage({ type: "success", text: "Pick updated successfully!" });
+        // Clear message after 3 seconds
+        setTimeout(() => setMessage(null), 3000);
         fetchPicks();
       } else {
-        throw new Error("Failed to update pick");
+        throw new Error(responseData.error || "Failed to update pick");
       }
     } catch (error) {
       console.error("Error updating pick:", error);
-      setMessage({ type: "error", text: "Failed to update pick" });
+      setMessage({
+        type: "error",
+        text: `Failed to update pick: ${error instanceof Error ? error.message : "Unknown error"}`,
+      });
+      // Clear message after 5 seconds
+      setTimeout(() => setMessage(null), 5000);
+    } finally {
+      // Remove from updating set
+      setUpdatingPicks((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(pickId);
+        return newSet;
+      });
     }
   };
 
@@ -207,7 +229,7 @@ export default function Admin() {
 
   const resetForm = () => {
     setFormData({
-      sportCode: "nba",
+      sportCode: "NBA",
       tier: "free",
       player: "",
       propType: "",
@@ -236,16 +258,24 @@ export default function Admin() {
   const getResultBadge = (result?: string) => {
     switch (result) {
       case "Win":
-        return <Badge className="bg-green-600 hover:bg-green-700">W</Badge>;
+        return (
+          <Badge className="bg-green-600 hover:bg-green-700 text-white border-0 font-semibold">
+            ✓ WIN
+          </Badge>
+        );
       case "Loss":
-        return <Badge className="bg-red-600 hover:bg-red-700">L</Badge>;
+        return (
+          <Badge className="bg-red-600 hover:bg-red-700 text-white border-0 font-semibold">
+            ✗ LOSS
+          </Badge>
+        );
       default:
         return (
           <Badge
             variant="outline"
-            className="border-yellow-500 text-yellow-600"
+            className="border-yellow-500 text-yellow-600 bg-yellow-50"
           >
-            Pending
+            ⏳ PENDING
           </Badge>
         );
     }
@@ -328,10 +358,10 @@ export default function Admin() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="nba">NBA</SelectItem>
-                        <SelectItem value="mlb">MLB</SelectItem>
-                        <SelectItem value="nfl">NFL</SelectItem>
-                        <SelectItem value="nhl">NHL</SelectItem>
+                        <SelectItem value="NBA">NBA</SelectItem>
+                        <SelectItem value="MLB">MLB</SelectItem>
+                        <SelectItem value="NFL">NFL</SelectItem>
+                        <SelectItem value="NHL">NHL</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -713,8 +743,11 @@ export default function Admin() {
                       onValueChange={(value: "Pending" | "Win" | "Loss") =>
                         handleUpdatePick(pick.id, { result: value })
                       }
+                      disabled={updatingPicks.has(pick.id)}
                     >
-                      <SelectTrigger className="w-[120px]">
+                      <SelectTrigger
+                        className={`w-[120px] ${updatingPicks.has(pick.id) ? "opacity-50" : ""}`}
+                      >
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>

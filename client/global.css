@@ -106,4 +106,140 @@
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
   }
+
+  /* Enhanced focus states */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Better link hover effects */
+  a {
+    @apply transition-all duration-200;
+  }
+
+  /* Custom gradient animations */
+  @keyframes gradient-x {
+    0%,
+    100% {
+      transform: translateX(0%);
+    }
+    50% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: calc(200px + 100%) 0;
+    }
+  }
+
+  /* Animation utility classes */
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.4s ease-out;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsla(var(--muted), 0.1),
+      transparent
+    );
+    background-size: 200px 100%;
+  }
+
+  /* Better card hover effects */
+  .card-hover {
+    @apply transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl;
+  }
+
+  /* Smooth gradient borders */
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(
+      90deg,
+      hsl(var(--brand-blue)),
+      hsl(var(--brand-purple)),
+      hsl(var(--brand-cyan))
+    );
+    background-size: 300% 300%;
+    animation: gradient-x 3s ease infinite;
+  }
+
+  /* Loading pulse improved */
+  .pulse-improved {
+    @apply animate-pulse bg-gradient-to-r from-muted via-muted/50 to-muted;
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* Better backdrop blur */
+  .backdrop-blur-enhanced {
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+  }
+
+  /* Improved selection styles */
+  ::selection {
+    @apply bg-primary/20 text-primary-foreground;
+  }
+
+  /* Better form focus styles */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply ring-2 ring-primary/50 border-primary/50;
+  }
+
+  /* Smooth page transitions */
+  .page-transition {
+    @apply opacity-0 translate-y-4;
+    animation: fade-in 0.5s ease-out forwards;
+  }
 }

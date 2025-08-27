@@ -8,173 +8,61 @@ import {
   Users,
   Target,
   ArrowRight,
-  Clock,
-  Calendar,
   Star,
   Zap,
+  Lock,
+  Shield,
+  Calendar,
+  Crown,
+  ExternalLink,
+  BarChart3,
+  DollarSign,
 } from "lucide-react";
 import { Pick, PremiumPick } from "@shared/api";
 
-interface Stats {
-  todayGames: number;
-  activePremiumPicks: number;
-}
-
-interface GameData {
-  sport: string;
-  count: number;
-  nextGameTime?: string;
-}
-
 export default function Index() {
-  const [selectedSport, setSelectedSport] = useState("nba");
-  const [timeUntilTonightGames, setTimeUntilTonightGames] = useState("");
   const [freePicks, setFreePicks] = useState<Pick[]>([]);
-  const [stats, setStats] = useState<Stats>({
-    todayGames: 0,
-    activePremiumPicks: 0,
-  });
+  const [premiumPicks, setPremiumPicks] = useState<PremiumPick[]>([]);
   const [loading, setLoading] = useState(true);
-  const [gamesData, setGamesData] = useState<GameData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        // Fetch both free and premium picks
+        // Fetch both free and premium picks for preview
         const [freeResponse, premiumResponse] = await Promise.all([
           fetch("/api/picks/free"),
           fetch("/api/picks/premium"),
         ]);
 
-        let freePicks: Pick[] = [];
-        let premiumPicks: PremiumPick[] = [];
-
         if (freeResponse.ok) {
           const freeData = await freeResponse.json();
-          freePicks = freeData.picks || [];
-          setFreePicks(freePicks);
+          setFreePicks(freeData.picks || []);
         }
 
         if (premiumResponse.ok) {
           const premiumData = await premiumResponse.json();
-          premiumPicks = premiumData.picks || [];
+          setPremiumPicks(premiumData.picks || []);
         }
-
-        // Create mock games data based on current time
-        const today = new Date();
-        const mockGamesData: GameData[] = [
-          {
-            sport: "NBA",
-            count: 6,
-            nextGameTime: new Date(
-              today.getTime() + 2 * 60 * 60 * 1000,
-            ).toISOString(),
-          },
-          {
-            sport: "MLB",
-            count: 4,
-            nextGameTime: new Date(
-              today.getTime() + 3 * 60 * 60 * 1000,
-            ).toISOString(),
-          },
-          {
-            sport: "NHL",
-            count: 2,
-            nextGameTime: new Date(
-              today.getTime() + 4 * 60 * 60 * 1000,
-            ).toISOString(),
-          },
-        ];
-
-        setGamesData(mockGamesData);
-
-        // Calculate real stats
-        const totalGames = mockGamesData.reduce(
-          (sum, game) => sum + game.count,
-          0,
-        );
-        setStats({
-          todayGames: totalGames,
-          activePremiumPicks: premiumPicks.length,
-        });
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Set fallback stats
-        setStats({
-          todayGames: 0,
-          activePremiumPicks: 0,
-        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+  }, []);
 
-    // Real countdown to next game
-    const updateCountdown = () => {
-      if (gamesData.length === 0) {
-        setTimeUntilTonightGames("TBD");
-        return;
-      }
-
-      const now = new Date();
-      let nextGameTime: Date | null = null;
-
-      // Find the earliest upcoming game
-      for (const game of gamesData) {
-        if (game.nextGameTime) {
-          const gameTime = new Date(game.nextGameTime);
-          if (gameTime > now && (!nextGameTime || gameTime < nextGameTime)) {
-            nextGameTime = gameTime;
-          }
-        }
-      }
-
-      if (!nextGameTime) {
-        // If no upcoming games today, set to 7 PM tomorrow
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(19, 0, 0, 0);
-        nextGameTime = tomorrow;
-      }
-
-      const diff = nextGameTime.getTime() - now.getTime();
-      if (diff <= 0) {
-        setTimeUntilTonightGames("Live");
-        return;
-      }
-
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-      if (hours > 24) {
-        const days = Math.floor(hours / 24);
-        setTimeUntilTonightGames(`${days}d ${hours % 24}h`);
-      } else {
-        setTimeUntilTonightGames(`${hours}h ${minutes}m`);
-      }
-    };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 60000);
-
-    return () => clearInterval(interval);
-  }, [gamesData.length]);
-
-  const activeSports = [
-    { code: "nba", name: "NBA", active: true },
-    { code: "mlb", name: "MLB", active: true },
-    { code: "nhl", name: "NHL", active: true },
-  ];
+  const activePremiumPicks = premiumPicks.filter(
+    (pick) => pick.result === "Pending",
+  ).length;
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
-        <div className="absolute inset-0 bg-[url('/api/placeholder/1920/1080')] bg-cover bg-center opacity-5" />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent" />
 
         <div className="relative container mx-auto px-4 py-16 lg:py-24">
@@ -184,7 +72,7 @@ export default function Index() {
               <div className="space-y-4">
                 <Badge className="bg-gradient-to-r from-brand-blue to-brand-purple text-white">
                   <Zap className="w-3 h-3 mr-1" />
-                  {stats.activePremiumPicks} Active PREMIUM Picks Today
+                  {activePremiumPicks} Active Premium Picks
                 </Badge>
 
                 <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
@@ -222,76 +110,59 @@ export default function Index() {
                   <Link to="/free-picks">View Free Picks</Link>
                 </Button>
               </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-6 pt-8 border-t border-border">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-brand-blue">
-                    {stats.todayGames}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Games Today
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-brand-cyan">
-                    {timeUntilTonightGames}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Until Games
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {/* Hero Visual */}
-            <div className="relative animate-slide-up">
-              <div className="relative bg-gradient-to-br from-card to-muted/10 rounded-2xl p-8 border border-border/50 backdrop-blur-sm">
-                <div className="absolute -inset-1 bg-gradient-to-br from-brand-blue/20 to-brand-purple/20 rounded-2xl blur opacity-60" />
+            {/* Hero Visual - How It Works Preview */}
+            <div
+              className="relative animate-slide-up"
+              style={{ animationDelay: "200ms" }}
+            >
+              <div className="relative bg-gradient-to-br from-card to-muted/10 rounded-2xl p-8 border border-border/50 backdrop-blur-enhanced hover:scale-[1.01] transition-all duration-500">
+                <div className="absolute -inset-1 bg-gradient-to-br from-brand-blue/30 to-brand-purple/30 rounded-2xl blur opacity-60 group-hover:opacity-80 transition-opacity" />
                 <div className="relative space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Tonight's Slate</h3>
+                    <h3 className="text-lg font-semibold">How It Works</h3>
                     <Badge variant="secondary">
-                      <Clock className="w-3 h-3 mr-1" />
-                      Live
+                      <Star className="w-3 h-3 mr-1" />
+                      Expert Picks
                     </Badge>
                   </div>
 
                   <div className="space-y-4">
-                    {gamesData.length > 0
-                      ? gamesData.map((sport) => (
-                          <div
-                            key={sport.sport.toLowerCase()}
-                            className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
-                                {sport.sport.slice(0, 2)}
-                              </div>
-                              <span className="font-medium">{sport.sport}</span>
-                            </div>
-                            <Badge variant="outline">{sport.count} games</Badge>
-                          </div>
-                        ))
-                      : // Loading or fallback
-                        [
-                          { sport: "NBA", count: 0 },
-                          { sport: "MLB", count: 0 },
-                          { sport: "NHL", count: 0 },
-                        ].map((sport) => (
-                          <div
-                            key={sport.sport.toLowerCase()}
-                            className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
-                                {sport.sport.slice(0, 2)}
-                              </div>
-                              <span className="font-medium">{sport.sport}</span>
-                            </div>
-                            <Badge variant="outline">{sport.count} games</Badge>
-                          </div>
-                        ))}
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white text-sm font-semibold">
+                          1
+                        </div>
+                        <span className="font-medium">Free Picks</span>
+                      </div>
+                      <Badge variant="outline">No Cost</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
+                          2
+                        </div>
+                        <span className="font-medium">Premium Analytics</span>
+                      </div>
+                      <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
+                        Premium
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white text-sm font-semibold">
+                          3
+                        </div>
+                        <span className="font-medium">Real-Time Updates</span>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="bg-cyan-50 text-cyan-700 border-cyan-200"
+                      >
+                        Live
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -300,50 +171,39 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Sport Switcher */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-          <h2 className="text-2xl font-bold">Today's Free Picks</h2>
-
-          {/* Sport Tabs */}
-          <div className="flex items-center space-x-1 bg-muted rounded-lg p-1">
-            {activeSports.map((sport) => (
-              <button
-                key={sport.code}
-                onClick={() => setSelectedSport(sport.code)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  selectedSport === sport.code
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {sport.name}
-              </button>
-            ))}
-          </div>
+      {/* Free Picks Spotlight */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">Free Picks Spotlight</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Get a taste of our expert analysis with these complimentary picks.
+            No signup required.
+          </p>
         </div>
 
-        {/* Free Picks Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {loading ? (
             // Loading skeleton
-            Array.from({ length: 3 }).map((_, index) => (
-              <Card key={index} className="animate-pulse">
+            Array.from({ length: 6 }).map((_, index) => (
+              <Card
+                key={index}
+                className="animate-pulse backdrop-blur-sm border-border/50"
+              >
                 <CardHeader className="pb-3">
-                  <div className="h-6 bg-muted rounded w-3/4"></div>
-                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                  <div className="h-6 animate-shimmer rounded w-3/4"></div>
+                  <div className="h-4 animate-shimmer rounded w-1/2 mt-2"></div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="h-16 bg-muted rounded"></div>
-                  <div className="h-12 bg-muted rounded"></div>
+                  <div className="h-16 animate-shimmer rounded"></div>
+                  <div className="h-12 animate-shimmer rounded"></div>
                 </CardContent>
               </Card>
             ))
           ) : freePicks.length > 0 ? (
-            freePicks.slice(0, 3).map((pick, index) => (
+            freePicks.slice(0, 6).map((pick, index) => (
               <Card
                 key={pick.id}
-                className="group hover:shadow-lg transition-all duration-200 animate-slide-up"
+                className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] animate-slide-up backdrop-blur-sm border-border/50"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <CardHeader className="pb-3">
@@ -371,12 +231,12 @@ export default function Index() {
                         {pick.propType} {pick.side} {pick.line}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {pick.side} {pick.line} {pick.propType}
+                        {pick.odds || "-110"} • {pick.sportsbook || "Various"}
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
                     {pick.analysis}
                   </p>
 
@@ -384,100 +244,304 @@ export default function Index() {
                     <Badge variant="outline" className="text-xs">
                       Free Pick
                     </Badge>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-brand-blue hover:text-brand-blue/80"
-                    >
-                      View Details
-                    </Button>
+                    <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                      <span>Confidence:</span>
+                      <div className="w-16 bg-muted rounded-full h-1.5">
+                        <div
+                          className="bg-gradient-to-r from-green-500 to-green-600 h-1.5 rounded-full"
+                          style={{ width: `${pick.confidence}%` }}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             ))
           ) : (
             <div className="col-span-3 text-center py-12">
+              <TrendingUp className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
+              <h3 className="text-lg font-semibold mb-2">
+                No Free Picks Available
+              </h3>
               <p className="text-muted-foreground">
-                No free picks available today.
+                Check back soon for new free picks from our analysts.
               </p>
             </div>
           )}
         </div>
 
-        {/* View All Free Picks */}
-        <div className="text-center">
-          <Button
-            variant="outline"
-            size="lg"
-            className="border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white"
-            asChild
-          >
-            <Link to="/free-picks">
-              View All Free Picks
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+        {freePicks.length > 0 && (
+          <div className="text-center">
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white"
+              asChild
+            >
+              <Link to="/free-picks">
+                View All Free Picks
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        )}
+      </section>
+
+      {/* Premium Teaser */}
+      <section className="bg-gradient-to-br from-muted/30 to-muted/10">
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <Crown className="h-8 w-8 text-brand-purple" />
+              <h2 className="text-3xl font-bold">Premium Experience</h2>
+            </div>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Unlock advanced analytics, confidence ratings, and expert insights
+              with our premium picks.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Premium Picks Preview */}
+            <div className="space-y-4">
+              {premiumPicks.slice(0, 2).map((pick, index) => (
+                <Card
+                  key={pick.id}
+                  className="relative overflow-hidden border-brand-purple/20 hover:border-brand-purple/40 transition-all duration-300 hover:shadow-lg backdrop-blur-sm"
+                >
+                  {/* Blur overlay */}
+                  <div className="absolute inset-0 backdrop-blur-sm bg-background/30 z-10 flex items-center justify-center">
+                    <div className="text-center space-y-3">
+                      <Lock className="h-8 w-8 mx-auto text-brand-purple" />
+                      <div className="space-y-1">
+                        <p className="font-semibold">Premium Pick</p>
+                        <p className="text-sm text-muted-foreground">
+                          {pick.confidence}% Confidence
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">{pick.player}</CardTitle>
+                      <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
+                        Premium
+                      </Badge>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="space-y-4">
+                    <div className="p-4 bg-gradient-to-r from-brand-purple/10 to-brand-blue/10 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-lg font-semibold">
+                          {pick.propType} {pick.side} {pick.line}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Advanced Analytics</span>
+                        <span>Available</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Stake Calculation</span>
+                        <span>{(pick.stakePercent * 100).toFixed(1)}%</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Premium Features */}
+            <div className="space-y-6">
+              <Card className="border-brand-purple/20 bg-gradient-to-br from-brand-purple/5 to-brand-blue/5 hover:border-brand-purple/40 transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-brand-purple" />
+                    Advanced Analytics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    In-depth player trends, matchup analysis, and predictive
+                    modeling for every premium pick.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-brand-blue/20 bg-gradient-to-br from-brand-blue/5 to-brand-cyan/5 hover:border-brand-blue/40 transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="h-5 w-5 text-brand-blue" />
+                    Confidence Ratings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    AI-powered confidence percentages and optimal stake sizing
+                    for bankroll management.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-green-500/20 bg-gradient-to-br from-green-500/5 to-green-600/5 hover:border-green-500/40 transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-green-500" />
+                    Bankroll Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Automatic stake calculations based on your bankroll and our
+                    confidence ratings.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-brand-purple to-brand-blue hover:from-brand-purple/90 hover:to-brand-blue/90 text-white shadow-lg"
+              asChild
+            >
+              <Link to="/premium-picks">
+                Unlock Premium Picks
+                <Crown className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
-      {/* Premium CTA Section */}
-      <section className="bg-gradient-to-br from-muted/30 to-muted/10">
-        <div className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-3xl lg:text-4xl font-bold">
-                Ready for
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-purple">
-                  Premium Analytics?
-                </span>
-              </h2>
+      {/* How It Works */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">How Vasive Locks Works</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Our three-tier system ensures you get reliable picks backed by data
+            and expert analysis.
+          </p>
+        </div>
 
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Get advanced analytics, confidence ratings, bankroll management,
-                and exclusive picks from our expert analysts.
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Card className="text-center hover:shadow-xl transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm border-border/50 group">
+            <CardHeader>
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <TrendingUp className="h-8 w-8 text-white" />
+              </div>
+              <CardTitle>Free Picks</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Access quality picks with basic analysis at no cost. Perfect for
+                getting started with our platform.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-brand-purple/20 hover:border-brand-purple/40 backdrop-blur-sm group">
+            <CardHeader>
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-brand-purple to-brand-blue rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <Crown className="h-8 w-8 text-white" />
+              </div>
+              <CardTitle className="flex items-center justify-center gap-2">
+                Premium Picks
+                <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-white border-0 text-xs">
+                  Popular
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Advanced analytics, confidence ratings, and bankroll management
+                tools for serious bettors.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center hover:shadow-xl transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm border-border/50 group">
+            <CardHeader>
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <Shield className="h-8 w-8 text-white" />
+              </div>
+              <CardTitle>Expert Analysis</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                All picks are verified and managed by our expert analysts,
+                ensuring quality and consistency.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Discord Invite */}
+      <section className="bg-gradient-to-r from-brand-purple/10 to-brand-blue/10 border-y border-brand-purple/20">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="space-y-6">
+              <div className="flex items-center justify-center space-x-3">
+                <Users className="h-12 w-12 text-brand-purple" />
+                <h2 className="text-3xl font-bold">Join Our Community</h2>
+              </div>
+
+              <p className="text-xl text-muted-foreground">
+                Connect with fellow bettors and get premium access by joining
+                our Discord community.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+                <div className="text-center space-y-2">
+                  <div className="text-2xl font-bold text-brand-blue">500+</div>
+                  <div className="text-sm text-muted-foreground">
+                    Community Members
+                  </div>
+                </div>
+                <div className="text-center space-y-2">
+                  <div className="text-2xl font-bold text-brand-purple">
+                    24/7
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Expert Support
+                  </div>
+                </div>
+                <div className="text-center space-y-2">
+                  <div className="text-2xl font-bold text-brand-cyan">Live</div>
+                  <div className="text-sm text-muted-foreground">
+                    Real-time Updates
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-brand-purple to-brand-blue hover:from-brand-purple/90 hover:to-brand-blue/90 text-white shadow-lg"
+                asChild
+              >
+                <a
+                  href="https://discord.gg/V7Yg3BhrFU"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center"
+                >
+                  <Users className="mr-2 h-5 w-5" />
+                  Join the Discord to Become Premium
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+
+              <p className="text-sm text-muted-foreground">
+                Free to join • Premium roles available • Expert analysts active
+                daily
               </p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 mx-auto bg-gradient-to-br from-brand-blue to-brand-purple rounded-lg flex items-center justify-center">
-                  <Target className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="font-semibold">Advanced Analytics</h3>
-                <p className="text-sm text-muted-foreground">
-                  In-depth player trends, matchup analysis, and predictive
-                  modeling
-                </p>
-              </div>
-
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 mx-auto bg-gradient-to-br from-brand-purple to-brand-cyan rounded-lg flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="font-semibold">Confidence Ratings</h3>
-                <p className="text-sm text-muted-foreground">
-                  AI-powered confidence percentages and optimal stake sizing
-                </p>
-              </div>
-
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 mx-auto bg-gradient-to-br from-brand-cyan to-brand-blue rounded-lg flex items-center justify-center">
-                  <Users className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="font-semibold">Expert Community</h3>
-                <p className="text-sm text-muted-foreground">
-                  Access to premium Discord and expert analyst insights
-                </p>
-              </div>
-            </div>
-
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90 text-white shadow-lg"
-            >
-              Upgrade to Premium
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
           </div>
         </div>
       </section>

@@ -69,6 +69,7 @@ export default function Layout({ children }: LayoutProps) {
       icon: Settings,
       alwaysVisible: true,
     },
+    // Admin tab only for actual admins
     { name: "Admin", href: "/admin", icon: Shield, admin: true },
   ];
 
@@ -134,7 +135,7 @@ export default function Layout({ children }: LayoutProps) {
             {isSignedIn ? (
               <div className="flex items-center space-x-3">
                 {isPremium && (
-                  <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
+                  <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-white border-0">
                     {isAdmin ? "Admin" : "Premium"}
                   </Badge>
                 )}
@@ -217,7 +218,7 @@ export default function Layout({ children }: LayoutProps) {
                   <div className="space-y-2">
                     {isPremium && (
                       <div className="px-3 py-2">
-                        <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
+                        <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-white border-0">
                           {isAdmin ? "Admin" : "Premium"} Member
                         </Badge>
                       </div>
@@ -265,7 +266,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className="border-t border-border bg-muted/20">
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
               <h3 className="text-sm font-semibold">Platform</h3>
               <div className="space-y-2 text-sm text-muted-foreground">
@@ -277,34 +278,6 @@ export default function Layout({ children }: LayoutProps) {
                   className="block hover:text-foreground"
                 >
                   Premium Picks
-                </Link>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Account</h3>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <Link to="/settings" className="block hover:text-foreground">
-                  Settings
-                </Link>
-                <Link to="#" className="block hover:text-foreground">
-                  Subscription
-                </Link>
-                <Link to="#" className="block hover:text-foreground">
-                  Billing
-                </Link>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Support</h3>
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <Link to="#" className="block hover:text-foreground">
-                  Help Center
-                </Link>
-                <Link to="#" className="block hover:text-foreground">
-                  Contact Us
-                </Link>
-                <Link to="#" className="block hover:text-foreground">
-                  Terms of Service
                 </Link>
               </div>
             </div>
