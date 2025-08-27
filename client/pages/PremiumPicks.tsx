@@ -104,16 +104,24 @@ export default function PremiumPicks() {
   function getResultBadge(result: string) {
     switch (result) {
       case "Win":
-        return <Badge className="bg-green-600 hover:bg-green-700">W</Badge>;
+        return (
+          <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 font-semibold shadow-lg">
+            ✓ WIN
+          </Badge>
+        );
       case "Loss":
-        return <Badge className="bg-red-600 hover:bg-red-700">L</Badge>;
+        return (
+          <Badge className="bg-gradient-to-r from-red-500 to-red-600 text-white border-0 font-semibold">
+            ✗ LOSS
+          </Badge>
+        );
       default:
         return (
           <Badge
             variant="outline"
-            className="border-yellow-500 text-yellow-600"
+            className="border-yellow-500 text-yellow-600 bg-yellow-50"
           >
-            Pending
+            ⏳ PENDING
           </Badge>
         );
     }
