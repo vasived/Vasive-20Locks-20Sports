@@ -182,7 +182,7 @@ export default function Layout({ children }: LayoutProps) {
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.name}</span>
-                    {item.premium && mockUser.isPremium && (
+                    {item.premium && isPremium && (
                       <Badge variant="secondary" className="text-xs">
                         Premium
                       </Badge>
