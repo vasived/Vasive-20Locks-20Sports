@@ -284,22 +284,23 @@ export default function Settings() {
                           />
                         </div>
                         <Button
-                          onClick={handleSaveBankroll}
-                          disabled={!hasChanges || saving}
-                          className="flex items-center gap-2"
-                        >
-                          {saving ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                              Saving...
-                            </>
-                          ) : (
-                            <>
-                              <Save className="h-4 w-4" />
-                              Save
-                            </>
-                          )}
-                        </Button>
+                      onClick={handleSaveBankroll}
+                      disabled={!hasChanges || saving}
+                      className="flex items-center gap-2"
+                      type="button"
+                    >
+                      {saving ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="h-4 w-4" />
+                          Save
+                        </>
+                      )}
+                    </Button>
                       </div>
                     </div>
 
