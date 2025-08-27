@@ -13,40 +13,76 @@ import {
   Star,
   Zap,
 } from "lucide-react";
-import { Pick } from "@shared/api";
+import { Pick, PremiumPick } from "@shared/api";
 
 interface Stats {
   todayGames: number;
-  activePicks: number;
+  activePremiumPicks: number;
+}
+
+interface GameData {
+  sport: string;
+  count: number;
+  nextGameTime?: string;
 }
 
 export default function Index() {
   const [selectedSport, setSelectedSport] = useState("nba");
   const [timeUntilTonightGames, setTimeUntilTonightGames] = useState("");
   const [freePicks, setFreePicks] = useState<Pick[]>([]);
-  const [stats, setStats] = useState<Stats>({ todayGames: 0, activePicks: 0 });
+  const [stats, setStats] = useState<Stats>({ todayGames: 0, activePremiumPicks: 0 });
   const [loading, setLoading] = useState(true);
+  const [gamesData, setGamesData] = useState<GameData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        // Fetch free picks
-        const picksResponse = await fetch('/api/picks/free');
-        if (picksResponse.ok) {
-          const picksData = await picksResponse.json();
-          setFreePicks(picksData.picks || []);
+        // Fetch both free and premium picks
+        const [freeResponse, premiumResponse] = await Promise.all([
+          fetch('/api/picks/free'),
+          fetch('/api/picks/premium')
+        ]);
+
+        let freePicks: Pick[] = [];
+        let premiumPicks: PremiumPick[] = [];
+
+        if (freeResponse.ok) {
+          const freeData = await freeResponse.json();
+          freePicks = freeData.picks || [];
+          setFreePicks(freePicks);
         }
 
-        // Set mock stats for now (can be enhanced later)
+        if (premiumResponse.ok) {
+          const premiumData = await premiumResponse.json();
+          premiumPicks = premiumData.picks || [];
+        }
+
+        // Create mock games data based on current time
+        const today = new Date();
+        const mockGamesData: GameData[] = [
+          { sport: "NBA", count: 6, nextGameTime: new Date(today.getTime() + 2 * 60 * 60 * 1000).toISOString() },
+          { sport: "MLB", count: 4, nextGameTime: new Date(today.getTime() + 3 * 60 * 60 * 1000).toISOString() },
+          { sport: "NHL", count: 2, nextGameTime: new Date(today.getTime() + 4 * 60 * 60 * 1000).toISOString() },
+        ];
+
+        setGamesData(mockGamesData);
+
+        // Calculate real stats
+        const totalGames = mockGamesData.reduce((sum, game) => sum + game.count, 0);
         setStats({
-          todayGames: 12,
-          activePicks: freePicks.length || 8,
+          todayGames: totalGames,
+          activePremiumPicks: premiumPicks.length,
         });
 
       } catch (error) {
         console.error('Error fetching data:', error);
+        // Set fallback stats
+        setStats({
+          todayGames: 0,
+          activePremiumPicks: 0,
+        });
       } finally {
         setLoading(false);
       }
@@ -54,28 +90,56 @@ export default function Index() {
 
     fetchData();
 
-    // Mock countdown to first game tonight
+    // Real countdown to next game
     const updateCountdown = () => {
-      const now = new Date();
-      const tonight = new Date();
-      tonight.setHours(19, 0, 0, 0); // 7 PM EST
-
-      if (now > tonight) {
-        tonight.setDate(tonight.getDate() + 1);
+      if (gamesData.length === 0) {
+        setTimeUntilTonightGames("TBD");
+        return;
       }
 
-      const diff = tonight.getTime() - now.getTime();
+      const now = new Date();
+      let nextGameTime: Date | null = null;
+
+      // Find the earliest upcoming game
+      for (const game of gamesData) {
+        if (game.nextGameTime) {
+          const gameTime = new Date(game.nextGameTime);
+          if (gameTime > now && (!nextGameTime || gameTime < nextGameTime)) {
+            nextGameTime = gameTime;
+          }
+        }
+      }
+
+      if (!nextGameTime) {
+        // If no upcoming games today, set to 7 PM tomorrow
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(19, 0, 0, 0);
+        nextGameTime = tomorrow;
+      }
+
+      const diff = nextGameTime.getTime() - now.getTime();
+      if (diff <= 0) {
+        setTimeUntilTonightGames("Live");
+        return;
+      }
+
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-      setTimeUntilTonightGames(`${hours}h ${minutes}m`);
+      if (hours > 24) {
+        const days = Math.floor(hours / 24);
+        setTimeUntilTonightGames(`${days}d ${hours % 24}h`);
+      } else {
+        setTimeUntilTonightGames(`${hours}h ${minutes}m`);
+      }
     };
 
     updateCountdown();
     const interval = setInterval(updateCountdown, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [gamesData.length]);
 
   const activeSports = [
     { code: "nba", name: "NBA", active: true },
@@ -97,7 +161,7 @@ export default function Index() {
               <div className="space-y-4">
                 <Badge className="bg-gradient-to-r from-brand-blue to-brand-purple text-white">
                   <Zap className="w-3 h-3 mr-1" />
-                  {stats.activePicks} Active Picks Today
+                  {stats.activePremiumPicks} Active PREMIUM Picks Today
                 </Badge>
 
                 <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
@@ -171,24 +235,40 @@ export default function Index() {
                   </div>
 
                   <div className="space-y-4">
-                    {[
-                      { code: "nba", name: "NBA", games: 6 },
-                      { code: "mlb", name: "MLB", games: 4 },
-                      { code: "nhl", name: "NHL", games: 2 },
-                    ].map((sport) => (
+                    {gamesData.length > 0 ? gamesData.map((sport) => (
                       <div
-                        key={sport.code}
+                        key={sport.sport.toLowerCase()}
                         className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
                       >
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
-                            {sport.name.slice(0, 2)}
+                            {sport.sport.slice(0, 2)}
                           </div>
-                          <span className="font-medium">{sport.name}</span>
+                          <span className="font-medium">{sport.sport}</span>
                         </div>
-                        <Badge variant="outline">{sport.games} games</Badge>
+                        <Badge variant="outline">{sport.count} games</Badge>
                       </div>
-                    ))}
+                    )) : (
+                      // Loading or fallback
+                      [
+                        { sport: "NBA", count: 0 },
+                        { sport: "MLB", count: 0 },
+                        { sport: "NHL", count: 0 },
+                      ].map((sport) => (
+                        <div
+                          key={sport.sport.toLowerCase()}
+                          className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
+                              {sport.sport.slice(0, 2)}
+                            </div>
+                            <span className="font-medium">{sport.sport}</span>
+                          </div>
+                          <Badge variant="outline">{sport.count} games</Badge>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>
