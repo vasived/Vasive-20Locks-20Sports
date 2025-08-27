@@ -1,16 +1,26 @@
 [build]
-  command = "npm run build"
+  command = "pnpm install && pnpm run build"
   functions = "netlify/functions"
   publish = "dist/spa"
 
-
 [functions]
-  external_node_modules = ["express", "pg", "cors", "dotenv", "zod"]
+  external_node_modules = ["pg"]
   node_bundler = "esbuild"
-  included_files = ["node_modules/**"]
-  
+
 [[redirects]]
   force = true
-  from = "/api/*"
+  from = "/api/picks/free"
   status = 200
-  to = "/.netlify/functions/api/:splat"
+  to = "/.netlify/functions/picks-free"
+
+[[redirects]]
+  force = true
+  from = "/api/picks/premium"
+  status = 200
+  to = "/.netlify/functions/picks-premium"
+
+[[redirects]]
+  force = true
+  from = "/api/picks"
+  status = 200
+  to = "/.netlify/functions/picks-create"
