@@ -296,7 +296,7 @@ export default function Index() {
               {premiumPicks.slice(0, 2).map((pick, index) => (
                 <Card
                   key={pick.id}
-                  className="relative overflow-hidden border-brand-purple/20"
+                  className="relative overflow-hidden border-brand-purple/20 hover:border-brand-purple/40 transition-all duration-300 hover:shadow-lg backdrop-blur-sm"
                 >
                   {/* Blur overlay */}
                   <div className="absolute inset-0 backdrop-blur-sm bg-background/30 z-10 flex items-center justify-center">
