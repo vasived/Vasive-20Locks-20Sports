@@ -55,7 +55,6 @@ export default function Layout({ children }: LayoutProps) {
       icon: Lock,
       premium: true,
     },
-    { name: "Schedule", href: "/schedule", icon: Calendar, public: true },
     { name: "Settings", href: "/settings", icon: Settings, auth: true },
     { name: "Admin", href: "/admin", icon: Shield, admin: true },
   ];
@@ -265,9 +264,6 @@ export default function Layout({ children }: LayoutProps) {
                   className="block hover:text-foreground"
                 >
                   Premium Picks
-                </Link>
-                <Link to="/schedule" className="block hover:text-foreground">
-                  Schedule
                 </Link>
               </div>
             </div>
