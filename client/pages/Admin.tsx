@@ -167,21 +167,29 @@ export default function Admin() {
     updates: Partial<ExtendedPick>,
   ) => {
     try {
+      console.log("Updating pick with:", { pickId, updates });
       const response = await fetch(`/api/picks/${pickId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
       });
 
+      const responseData = await response.json();
+      console.log("Update response:", responseData);
+
       if (response.ok) {
         setMessage({ type: "success", text: "Pick updated successfully!" });
+        // Clear message after 3 seconds
+        setTimeout(() => setMessage(null), 3000);
         fetchPicks();
       } else {
-        throw new Error("Failed to update pick");
+        throw new Error(responseData.error || "Failed to update pick");
       }
     } catch (error) {
       console.error("Error updating pick:", error);
-      setMessage({ type: "error", text: "Failed to update pick" });
+      setMessage({ type: "error", text: `Failed to update pick: ${error instanceof Error ? error.message : "Unknown error"}` });
+      // Clear message after 5 seconds
+      setTimeout(() => setMessage(null), 5000);
     }
   };
 
