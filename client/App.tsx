@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import Layout from "./components/Layout";
+import { RequireAuth, RequirePremium, RequireAdmin } from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import FreePicks from "./pages/FreePicks";
 import PremiumPicks from "./pages/PremiumPicks";
