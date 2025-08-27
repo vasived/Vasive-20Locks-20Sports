@@ -78,14 +78,25 @@ export default function Settings() {
         // Wait a bit longer to ensure the reload completes
         await new Promise(resolve => setTimeout(resolve, 200));
 
-        // Use a completely fresh object without spreading existing metadata
-        const updateData = {
-          privateMetadata: {
-            bankroll: bankrollValue,
-          },
-        };
-
-        await user.update(updateData);
+        // Try privateMetadata first, fallback to unsafeMetadata if it fails
+        let updateData;
+        try {
+          updateData = {
+            privateMetadata: {
+              bankroll: bankrollValue,
+            },
+          };
+          await user.update(updateData);
+        } catch (privateError) {
+          console.warn("Private metadata update failed, trying unsafeMetadata:", privateError);
+          // Fallback to unsafeMetadata
+          updateData = {
+            unsafeMetadata: {
+              bankroll: bankrollValue,
+            },
+          };
+          await user.update(updateData);
+        }
 
         setOriginalBankroll(bankroll);
         setSaveMessage({
