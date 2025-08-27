@@ -24,12 +24,16 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-// Mock user state - replace with actual Clerk integration
-const mockUser = {
-  isSignedIn: false,
-  isPremium: false,
-  isAdmin: false,
-};
+// Helper function to check user roles
+function hasRole(user: any, role: string): boolean {
+  return user?.publicMetadata?.role === role ||
+         user?.publicMetadata?.roles?.includes(role) ||
+         false;
+}
+
+function isPremiumUser(user: any): boolean {
+  return hasRole(user, 'premium') || hasRole(user, 'admin');
+}
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
