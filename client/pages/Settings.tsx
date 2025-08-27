@@ -144,7 +144,8 @@ export default function Settings() {
   };
 
   const hasChanges = bankroll !== originalBankroll;
-  const currentBankrollValue = parseFloat(originalBankroll) || 0;
+  const currentBankrollValue = parseFloat(originalBankroll) ||
+    parseFloat(user?.privateMetadata?.bankroll?.toString() || user?.unsafeMetadata?.bankroll?.toString() || "0");
 
   if (!isSignedIn) {
     return (
