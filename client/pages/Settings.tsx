@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, SignInButton } from "@clerk/clerk-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,9 @@ import {
   AlertCircle,
   CheckCircle,
   Save,
+  Lock,
+  Users,
+  ExternalLink,
 } from "lucide-react";
 
 // Helper function to check user roles
@@ -98,14 +101,49 @@ export default function Settings() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto text-center">
-          <Card>
-            <CardContent className="pt-6">
-              <Shield className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
-              <h2 className="text-2xl font-bold mb-2">Sign In Required</h2>
+          <Card className="shadow-lg">
+            <CardHeader>
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center">
+                  <SettingsIcon className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <CardTitle className="text-2xl">Access Your Settings</CardTitle>
               <p className="text-muted-foreground">
-                Please sign in to access your account settings and manage your
-                bankroll.
+                Sign in to manage your account, bankroll, and betting preferences.
               </p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <User className="h-8 w-8 mx-auto mb-2 text-brand-blue" />
+                  <h3 className="font-semibold">Account Info</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Manage your profile and preferences
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <DollarSign className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <h3 className="font-semibold">Bankroll Management</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Track and manage your betting bankroll
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <SignInButton mode="modal">
+                  <Button
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90"
+                  >
+                    Sign In to Access Settings
+                  </Button>
+                </SignInButton>
+                <p className="text-sm text-muted-foreground">
+                  Don't have an account? Sign up to get started with premium features.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -194,87 +232,127 @@ export default function Settings() {
                 <CardTitle className="flex items-center gap-2">
                   <DollarSign className="h-5 w-5 text-green-500" />
                   Bankroll Management
+                  {!isPremium && (
+                    <Badge variant="outline" className="border-brand-purple text-brand-purple">
+                      <Lock className="h-3 w-3 mr-1" />
+                      Premium Feature
+                    </Badge>
+                  )}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Set your bankroll to automatically calculate stake amounts for
-                  premium picks.
+                  {isPremium
+                    ? "Set your bankroll to automatically calculate stake amounts for premium picks."
+                    : "Join our Discord community to unlock bankroll management and premium features."}
                 </p>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="bankroll">Bankroll Amount (USD)</Label>
-                  <div className="flex items-center gap-3">
-                    <div className="relative flex-1">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                        $
-                      </span>
-                      <Input
-                        id="bankroll"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        placeholder="0.00"
-                        value={bankroll}
-                        onChange={(e) => setBankroll(e.target.value)}
-                        className="pl-8"
-                      />
+                {isPremium ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="bankroll">Bankroll Amount (USD)</Label>
+                      <div className="flex items-center gap-3">
+                        <div className="relative flex-1">
+                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                            $
+                          </span>
+                          <Input
+                            id="bankroll"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            value={bankroll}
+                            onChange={(e) => setBankroll(e.target.value)}
+                            className="pl-8"
+                          />
+                        </div>
+                        <Button
+                          onClick={handleSaveBankroll}
+                          disabled={!hasChanges || saving}
+                          className="flex items-center gap-2"
+                        >
+                          {saving ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                              Saving...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="h-4 w-4" />
+                              Save
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
-                    <Button
-                      onClick={handleSaveBankroll}
-                      disabled={!hasChanges || saving}
-                      className="flex items-center gap-2"
-                    >
-                      {saving ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="h-4 w-4" />
-                          Save
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
 
-                {saveMessage && (
-                  <Alert
-                    className={
-                      saveMessage.type === "success"
-                        ? "border-green-500"
-                        : "border-red-500"
-                    }
-                  >
-                    {saveMessage.type === "success" ? (
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <AlertCircle className="h-4 w-4 text-red-500" />
+                    {saveMessage && (
+                      <Alert
+                        className={
+                          saveMessage.type === "success"
+                            ? "border-green-500"
+                            : "border-red-500"
+                        }
+                      >
+                        {saveMessage.type === "success" ? (
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <AlertCircle className="h-4 w-4 text-red-500" />
+                        )}
+                        <AlertDescription
+                          className={
+                            saveMessage.type === "success"
+                              ? "text-green-700"
+                              : "text-red-700"
+                          }
+                        >
+                          {saveMessage.message}
+                        </AlertDescription>
+                      </Alert>
                     )}
-                    <AlertDescription
-                      className={
-                        saveMessage.type === "success"
-                          ? "text-green-700"
-                          : "text-red-700"
-                      }
-                    >
-                      {saveMessage.message}
-                    </AlertDescription>
-                  </Alert>
-                )}
 
-                <div className="p-4 bg-muted/30 rounded-lg">
-                  <h4 className="font-medium mb-2">How it works:</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• Set your total betting bankroll amount</li>
-                    <li>• Premium picks will show recommended stake amounts</li>
-                    <li>
-                      • Stakes are calculated as a percentage of your bankroll
-                    </li>
-                    <li>• This helps with proper bankroll management</li>
-                  </ul>
-                </div>
+                    <div className="p-4 bg-muted/30 rounded-lg">
+                      <h4 className="font-medium mb-2">How it works:</h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        <li>• Set your total betting bankroll amount</li>
+                        <li>• Premium picks will show recommended stake amounts</li>
+                        <li>
+                          • Stakes are calculated as a percentage of your bankroll
+                        </li>
+                        <li>• This helps with proper bankroll management</li>
+                      </ul>
+                    </div>
+                  </>
+                ) : (
+                  <div className="p-6 bg-gradient-to-r from-brand-purple/5 to-brand-blue/5 rounded-lg border border-brand-purple/20">
+                    <div className="text-center space-y-4">
+                      <div className="flex items-center justify-center">
+                        <Lock className="h-12 w-12 text-brand-purple" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg mb-2">Premium Feature Locked</h3>
+                        <p className="text-muted-foreground mb-4">
+                          Bankroll management is available to premium members. Join our Discord community to unlock this feature and get access to advanced stake calculations.
+                        </p>
+                      </div>
+                      <Button
+                        className="bg-gradient-to-r from-brand-purple to-brand-blue hover:from-brand-purple/90 hover:to-brand-blue/90"
+                        asChild
+                      >
+                        <a
+                          href="https://discord.gg/V7Yg3BhrFU"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center"
+                        >
+                          <Users className="mr-2 h-4 w-4" />
+                          Join the Discord to Become Premium
+                          <ExternalLink className="ml-2 h-4 w-4" />
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
