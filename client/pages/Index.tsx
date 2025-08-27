@@ -191,10 +191,10 @@ export default function Index() {
           ) : freePicks.length > 0 ? (
             freePicks.slice(0, 6).map((pick, index) => (
               <Card
-                key={pick.id}
-                className="group hover:shadow-lg transition-all duration-200 animate-slide-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
+              key={pick.id}
+              className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] animate-slide-up backdrop-blur-sm border-border/50"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">{pick.player}</CardTitle>
