@@ -93,7 +93,7 @@ export default function Index() {
               <div className="space-y-4">
                 <Badge className="bg-gradient-to-r from-brand-blue to-brand-purple text-white">
                   <Zap className="w-3 h-3 mr-1" />
-                  {mockStats.activePicks} Active Picks Today
+                  {stats.activePicks} Active Picks Today
                 </Badge>
 
                 <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
@@ -136,7 +136,7 @@ export default function Index() {
               <div className="grid grid-cols-2 gap-6 pt-8 border-t border-border">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-blue">
-                    {mockStats.todayGames}
+                    {stats.todayGames}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     Games Today
@@ -167,7 +167,11 @@ export default function Index() {
                   </div>
 
                   <div className="space-y-4">
-                    {activeSports.map((sport) => (
+                    {[
+                      { code: "nba", name: "NBA", games: 6 },
+                      { code: "mlb", name: "MLB", games: 4 },
+                      { code: "nhl", name: "NHL", games: 2 },
+                    ].map((sport) => (
                       <div
                         key={sport.code}
                         className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
