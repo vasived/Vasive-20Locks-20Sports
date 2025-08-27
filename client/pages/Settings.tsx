@@ -56,7 +56,7 @@ export default function Settings() {
   }, [user]);
 
   const handleSaveBankroll = async () => {
-    if (!user) return;
+    if (!user || saving) return; // Prevent multiple concurrent requests
 
     const bankrollValue = parseFloat(bankroll);
     if (isNaN(bankrollValue) || bankrollValue < 0) {
@@ -71,11 +71,17 @@ export default function Settings() {
     setSaveMessage(null);
 
     try {
+      // Add a small delay to prevent rapid-fire requests
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Create a fresh metadata object to avoid reference issues
+      const newPrivateMetadata = {
+        bankroll: bankrollValue,
+        ...(user.privateMetadata || {}),
+      };
+
       await user.update({
-        privateMetadata: {
-          ...user.privateMetadata,
-          bankroll: bankrollValue,
-        },
+        privateMetadata: newPrivateMetadata,
       });
 
       setOriginalBankroll(bankroll);
@@ -83,11 +89,22 @@ export default function Settings() {
         type: "success",
         message: "Bankroll updated successfully!",
       });
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSaveMessage(null), 3000);
     } catch (error) {
       console.error("Error updating bankroll:", error);
+
+      // More specific error handling
+      const errorMessage = error instanceof Error
+        ? error.message.includes("stream")
+          ? "Update in progress. Please wait and try again."
+          : "Failed to update bankroll. Please try again."
+        : "Failed to update bankroll. Please try again.";
+
       setSaveMessage({
         type: "error",
-        message: "Failed to update bankroll. Please try again.",
+        message: errorMessage,
       });
     } finally {
       setSaving(false);
