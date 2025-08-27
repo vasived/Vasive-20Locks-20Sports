@@ -177,14 +177,14 @@ export default function Index() {
           {loading ? (
             // Loading skeleton
             Array.from({ length: 6 }).map((_, index) => (
-              <Card key={index} className="animate-pulse">
+              <Card key={index} className="animate-pulse backdrop-blur-sm border-border/50">
                 <CardHeader className="pb-3">
-                  <div className="h-6 bg-muted rounded w-3/4"></div>
-                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                  <div className="h-6 animate-shimmer rounded w-3/4"></div>
+                  <div className="h-4 animate-shimmer rounded w-1/2 mt-2"></div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="h-16 bg-muted rounded"></div>
-                  <div className="h-12 bg-muted rounded"></div>
+                  <div className="h-16 animate-shimmer rounded"></div>
+                  <div className="h-12 animate-shimmer rounded"></div>
                 </CardContent>
               </Card>
             ))
