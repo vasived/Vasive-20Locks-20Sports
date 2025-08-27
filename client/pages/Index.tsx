@@ -148,12 +148,12 @@ export default function Index() {
                     </div>
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white text-sm font-semibold">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white text-sm font-semibold">
                           3
                         </div>
-                        <span className="font-medium">Admin Verified</span>
+                        <span className="font-medium">Real-Time Updates</span>
                       </div>
-                      <Badge variant="outline">Trusted</Badge>
+                      <Badge variant="outline" className="bg-cyan-50 text-cyan-700 border-cyan-200">Live</Badge>
                     </div>
                   </div>
                 </div>
