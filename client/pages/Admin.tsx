@@ -168,6 +168,9 @@ export default function Admin() {
     updates: Partial<ExtendedPick>,
   ) => {
     try {
+      // Add to updating set
+      setUpdatingPicks(prev => new Set(prev).add(pickId));
+
       console.log("Updating pick with:", { pickId, updates });
       const response = await fetch(`/api/picks/${pickId}`, {
         method: "PUT",
@@ -191,6 +194,13 @@ export default function Admin() {
       setMessage({ type: "error", text: `Failed to update pick: ${error instanceof Error ? error.message : "Unknown error"}` });
       // Clear message after 5 seconds
       setTimeout(() => setMessage(null), 5000);
+    } finally {
+      // Remove from updating set
+      setUpdatingPicks(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(pickId);
+        return newSet;
+      });
     }
   };
 
