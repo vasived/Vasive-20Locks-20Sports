@@ -740,8 +740,9 @@ export default function Admin() {
                       onValueChange={(value: "Pending" | "Win" | "Loss") =>
                         handleUpdatePick(pick.id, { result: value })
                       }
+                      disabled={updatingPicks.has(pick.id)}
                     >
-                      <SelectTrigger className="w-[120px]">
+                      <SelectTrigger className={`w-[120px] ${updatingPicks.has(pick.id) ? 'opacity-50' : ''}`}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
