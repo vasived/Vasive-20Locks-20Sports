@@ -193,30 +193,44 @@ export default function Layout({ children }: LayoutProps) {
               
               {/* Mobile Auth Buttons */}
               <div className="pt-2 border-t border-border">
-                {mockUser.isSignedIn ? (
+                {isSignedIn ? (
                   <div className="space-y-2">
-                    {mockUser.isPremium && (
+                    {isPremium && (
                       <div className="px-3 py-2">
                         <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
-                          Premium Member
+                          {isAdmin ? 'Admin' : 'Premium'} Member
                         </Badge>
                       </div>
                     )}
-                    <Button variant="outline" size="sm" className="w-full">
-                      Sign Out
-                    </Button>
+                    <div className="px-3 py-2">
+                      <div className="text-sm text-muted-foreground mb-2">
+                        {user?.firstName} {user?.lastName}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {user?.primaryEmailAddress?.emailAddress}
+                      </div>
+                    </div>
+                    <SignOutButton>
+                      <Button variant="outline" size="sm" className="w-full">
+                        Sign Out
+                      </Button>
+                    </SignOutButton>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <Button variant="ghost" size="sm" className="w-full">
-                      Sign In
-                    </Button>
-                    <Button 
-                      size="sm"
-                      className="w-full bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90"
-                    >
-                      Go Premium
-                    </Button>
+                    <SignInButton mode="modal">
+                      <Button variant="ghost" size="sm" className="w-full">
+                        Sign In
+                      </Button>
+                    </SignInButton>
+                    <SignUpButton mode="modal">
+                      <Button
+                        size="sm"
+                        className="w-full bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90"
+                      >
+                        Go Premium
+                      </Button>
+                    </SignUpButton>
                   </div>
                 )}
               </div>
