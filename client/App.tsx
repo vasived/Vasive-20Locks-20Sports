@@ -27,27 +27,29 @@ if (!PUBLISHABLE_KEY) {
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/free-picks" element={<FreePicks />} />
-            <Route path="/premium-picks" element={<PremiumPicks />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/research/:gameId" element={<Research />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/free-picks" element={<FreePicks />} />
+              <Route path="/premium-picks" element={<PremiumPicks />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/schedule" element={<Schedule />} />
+              <Route path="/research/:gameId" element={<Research />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ClerkProvider>
 );
 
 createRoot(document.getElementById("root")!).render(<App />);
