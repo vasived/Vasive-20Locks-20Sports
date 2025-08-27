@@ -21,14 +21,16 @@ import { PremiumPick } from "@shared/api";
 
 // Helper function to format game time
 function formatGameTime(tipoffTime: string) {
-  if (!tipoffTime || tipoffTime === 'TBD') return 'TBD';
+  if (!tipoffTime || tipoffTime === "TBD") return "TBD";
   try {
     const date = new Date(tipoffTime);
-    return date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      timeZone: "America/New_York",
-    }) + " EST";
+    return (
+      date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZone: "America/New_York",
+      }) + " EST"
+    );
   } catch {
     return tipoffTime;
   }
@@ -65,13 +67,13 @@ export default function PremiumPicks() {
 
       try {
         setLoading(true);
-        const response = await fetch('/api/picks/premium');
+        const response = await fetch("/api/picks/premium");
         if (response.ok) {
           const data = await response.json();
           setPremiumPicks(data.picks || []);
         }
       } catch (error) {
-        console.error('Error fetching premium picks:', error);
+        console.error("Error fetching premium picks:", error);
       } finally {
         setLoading(false);
       }
@@ -141,9 +143,12 @@ export default function PremiumPicks() {
                   <Users className="h-8 w-8 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl">Join Our Premium Discord Community</CardTitle>
+              <CardTitle className="text-2xl">
+                Join Our Premium Discord Community
+              </CardTitle>
               <p className="text-muted-foreground text-lg">
-                Get exclusive access to premium picks, advanced analytics, and real-time discussions with our expert analysts.
+                Get exclusive access to premium picks, advanced analytics, and
+                real-time discussions with our expert analysts.
               </p>
             </CardHeader>
 
@@ -153,30 +158,41 @@ export default function PremiumPicks() {
                 <div className="text-center p-4 bg-background/50 rounded-lg">
                   <BarChart3 className="h-8 w-8 mx-auto mb-2 text-brand-purple" />
                   <h3 className="font-semibold">Advanced Analytics</h3>
-                  <p className="text-sm text-muted-foreground">Detailed trends, matchup data, and predictive modeling</p>
+                  <p className="text-sm text-muted-foreground">
+                    Detailed trends, matchup data, and predictive modeling
+                  </p>
                 </div>
                 <div className="text-center p-4 bg-background/50 rounded-lg">
                   <Target className="h-8 w-8 mx-auto mb-2 text-brand-blue" />
                   <h3 className="font-semibold">Confidence Ratings</h3>
-                  <p className="text-sm text-muted-foreground">AI-powered confidence percentages for every pick</p>
+                  <p className="text-sm text-muted-foreground">
+                    AI-powered confidence percentages for every pick
+                  </p>
                 </div>
                 <div className="text-center p-4 bg-background/50 rounded-lg">
                   <DollarSign className="h-8 w-8 mx-auto mb-2 text-brand-cyan" />
                   <h3 className="font-semibold">Bankroll Management</h3>
-                  <p className="text-sm text-muted-foreground">Optimal stake sizing and risk management</p>
+                  <p className="text-sm text-muted-foreground">
+                    Optimal stake sizing and risk management
+                  </p>
                 </div>
                 <div className="text-center p-4 bg-background/50 rounded-lg">
                   <Zap className="h-8 w-8 mx-auto mb-2 text-green-500" />
                   <h3 className="font-semibold">Real-time Updates</h3>
-                  <p className="text-sm text-muted-foreground">Live picks, line movements, and injury reports</p>
+                  <p className="text-sm text-muted-foreground">
+                    Live picks, line movements, and injury reports
+                  </p>
                 </div>
               </div>
 
               {/* Discord CTA */}
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold">Ready to become premium?</h3>
+                <h3 className="text-xl font-semibold">
+                  Ready to become premium?
+                </h3>
                 <p className="text-muted-foreground">
-                  Join our Discord community to unlock premium picks and connect with fellow bettors and analysts.
+                  Join our Discord community to unlock premium picks and connect
+                  with fellow bettors and analysts.
                 </p>
                 <Button
                   size="lg"
@@ -203,7 +219,9 @@ export default function PremiumPicks() {
                   {!isSignedIn ? (
                     <span>Sign in to view your premium picks.</span>
                   ) : (
-                    <span>Contact support if you believe this is an error.</span>
+                    <span>
+                      Contact support if you believe this is an error.
+                    </span>
                   )}
                 </p>
               </div>
@@ -307,7 +325,7 @@ export default function PremiumPicks() {
                     <CardTitle className="text-lg flex items-center gap-3">
                       {pick.player}
                       <Badge variant="outline" className="text-xs">
-                        {pick.sport || 'NBA'}
+                        {pick.sport || "NBA"}
                       </Badge>
                       {getResultBadge(pick.result)}
                     </CardTitle>
@@ -341,7 +359,7 @@ export default function PremiumPicks() {
                       {pick.propType} {pick.side} {pick.line}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {pick.odds || '-110'} ��� {pick.sportsbook || 'Various'}
+                      {pick.odds || "-110"} ��� {pick.sportsbook || "Various"}
                     </div>
                   </div>
                 </div>
@@ -398,8 +416,12 @@ export default function PremiumPicks() {
         ) : (
           <div className="col-span-2 text-center py-12">
             <Crown className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
-            <h3 className="text-lg font-semibold mb-2">No Premium Picks Available</h3>
-            <p className="text-muted-foreground">Check back soon for new premium picks from our analysts.</p>
+            <h3 className="text-lg font-semibold mb-2">
+              No Premium Picks Available
+            </h3>
+            <p className="text-muted-foreground">
+              Check back soon for new premium picks from our analysts.
+            </p>
           </div>
         )}
       </div>

@@ -36,7 +36,10 @@ export default function Settings() {
   const [bankroll, setBankroll] = useState("");
   const [originalBankroll, setOriginalBankroll] = useState("");
   const [saving, setSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+  const [saveMessage, setSaveMessage] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   const isPremium = isSignedIn && isPremiumUser(user);
   const isAdmin = isSignedIn && hasRole(user, "admin");
@@ -54,7 +57,10 @@ export default function Settings() {
 
     const bankrollValue = parseFloat(bankroll);
     if (isNaN(bankrollValue) || bankrollValue < 0) {
-      setSaveMessage({ type: 'error', message: 'Please enter a valid bankroll amount' });
+      setSaveMessage({
+        type: "error",
+        message: "Please enter a valid bankroll amount",
+      });
       return;
     }
 
@@ -70,10 +76,16 @@ export default function Settings() {
       });
 
       setOriginalBankroll(bankroll);
-      setSaveMessage({ type: 'success', message: 'Bankroll updated successfully!' });
+      setSaveMessage({
+        type: "success",
+        message: "Bankroll updated successfully!",
+      });
     } catch (error) {
-      console.error('Error updating bankroll:', error);
-      setSaveMessage({ type: 'error', message: 'Failed to update bankroll. Please try again.' });
+      console.error("Error updating bankroll:", error);
+      setSaveMessage({
+        type: "error",
+        message: "Failed to update bankroll. Please try again.",
+      });
     } finally {
       setSaving(false);
     }
@@ -91,7 +103,8 @@ export default function Settings() {
               <Shield className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
               <h2 className="text-2xl font-bold mb-2">Sign In Required</h2>
               <p className="text-muted-foreground">
-                Please sign in to access your account settings and manage your bankroll.
+                Please sign in to access your account settings and manage your
+                bankroll.
               </p>
             </CardContent>
           </Card>
@@ -128,19 +141,25 @@ export default function Settings() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm text-muted-foreground">Name</Label>
+                    <Label className="text-sm text-muted-foreground">
+                      Name
+                    </Label>
                     <div className="font-medium">
                       {user.firstName} {user.lastName}
                     </div>
                   </div>
                   <div>
-                    <Label className="text-sm text-muted-foreground">Email</Label>
+                    <Label className="text-sm text-muted-foreground">
+                      Email
+                    </Label>
                     <div className="font-medium">
                       {user.primaryEmailAddress?.emailAddress}
                     </div>
                   </div>
                   <div>
-                    <Label className="text-sm text-muted-foreground">Account Type</Label>
+                    <Label className="text-sm text-muted-foreground">
+                      Account Type
+                    </Label>
                     <div className="flex items-center gap-2">
                       {isAdmin ? (
                         <Badge className="bg-gradient-to-r from-red-500 to-red-600">
@@ -153,14 +172,14 @@ export default function Settings() {
                           Premium
                         </Badge>
                       ) : (
-                        <Badge variant="outline">
-                          Free
-                        </Badge>
+                        <Badge variant="outline">Free</Badge>
                       )}
                     </div>
                   </div>
                   <div>
-                    <Label className="text-sm text-muted-foreground">Member Since</Label>
+                    <Label className="text-sm text-muted-foreground">
+                      Member Since
+                    </Label>
                     <div className="font-medium">
                       {new Date(user.createdAt!).toLocaleDateString()}
                     </div>
@@ -177,7 +196,8 @@ export default function Settings() {
                   Bankroll Management
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Set your bankroll to automatically calculate stake amounts for premium picks.
+                  Set your bankroll to automatically calculate stake amounts for
+                  premium picks.
                 </p>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -220,13 +240,25 @@ export default function Settings() {
                 </div>
 
                 {saveMessage && (
-                  <Alert className={saveMessage.type === 'success' ? 'border-green-500' : 'border-red-500'}>
-                    {saveMessage.type === 'success' ? (
+                  <Alert
+                    className={
+                      saveMessage.type === "success"
+                        ? "border-green-500"
+                        : "border-red-500"
+                    }
+                  >
+                    {saveMessage.type === "success" ? (
                       <CheckCircle className="h-4 w-4 text-green-500" />
                     ) : (
                       <AlertCircle className="h-4 w-4 text-red-500" />
                     )}
-                    <AlertDescription className={saveMessage.type === 'success' ? 'text-green-700' : 'text-red-700'}>
+                    <AlertDescription
+                      className={
+                        saveMessage.type === "success"
+                          ? "text-green-700"
+                          : "text-red-700"
+                      }
+                    >
                       {saveMessage.message}
                     </AlertDescription>
                   </Alert>
@@ -237,7 +269,9 @@ export default function Settings() {
                   <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• Set your total betting bankroll amount</li>
                     <li>• Premium picks will show recommended stake amounts</li>
-                    <li>• Stakes are calculated as a percentage of your bankroll</li>
+                    <li>
+                      • Stakes are calculated as a percentage of your bankroll
+                    </li>
                     <li>• This helps with proper bankroll management</li>
                   </ul>
                 </div>
@@ -255,7 +289,8 @@ export default function Settings() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground mb-4">
-                    Join our Discord community to become a premium member and unlock:
+                    Join our Discord community to become a premium member and
+                    unlock:
                   </p>
                   <ul className="text-sm space-y-1 mb-4">
                     <li>• Advanced analytics and insights</li>
@@ -292,9 +327,11 @@ export default function Settings() {
                   <div className="text-3xl font-bold text-brand-blue">
                     ${currentBankrollValue.toLocaleString()}
                   </div>
-                  <p className="text-sm text-muted-foreground">Current Bankroll</p>
+                  <p className="text-sm text-muted-foreground">
+                    Current Bankroll
+                  </p>
                 </div>
-                
+
                 {currentBankrollValue > 0 && (
                   <>
                     <Separator className="my-4" />
@@ -302,16 +339,28 @@ export default function Settings() {
                       <h4 className="font-medium text-sm">Sample Stakes:</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">1% stake:</span>
-                          <span className="font-medium">${(currentBankrollValue * 0.01).toFixed(2)}</span>
+                          <span className="text-muted-foreground">
+                            1% stake:
+                          </span>
+                          <span className="font-medium">
+                            ${(currentBankrollValue * 0.01).toFixed(2)}
+                          </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">2% stake:</span>
-                          <span className="font-medium">${(currentBankrollValue * 0.02).toFixed(2)}</span>
+                          <span className="text-muted-foreground">
+                            2% stake:
+                          </span>
+                          <span className="font-medium">
+                            ${(currentBankrollValue * 0.02).toFixed(2)}
+                          </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">5% stake:</span>
-                          <span className="font-medium">${(currentBankrollValue * 0.05).toFixed(2)}</span>
+                          <span className="text-muted-foreground">
+                            5% stake:
+                          </span>
+                          <span className="font-medium">
+                            ${(currentBankrollValue * 0.05).toFixed(2)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -330,7 +379,7 @@ export default function Settings() {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Account Type:</span>
                     <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
-                      {isAdmin ? 'Admin' : 'Premium'}
+                      {isAdmin ? "Admin" : "Premium"}
                     </Badge>
                   </div>
                   <div className="flex justify-between">

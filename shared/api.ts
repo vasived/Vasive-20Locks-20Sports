@@ -7,7 +7,7 @@ export interface Pick {
   player: string;
   propType: string;
   line: number;
-  side: 'Over' | 'Under';
+  side: "Over" | "Under";
   game: string;
   tipoff: string;
   analysis: string;
@@ -20,23 +20,23 @@ export interface Pick {
 export interface PremiumPick extends Pick {
   analytics?: string;
   stakePercent: number;
-  result: 'Pending' | 'Win' | 'Loss';
+  result: "Pending" | "Win" | "Loss";
 }
 
 export interface UserRole {
   clerkUserId: string;
-  role: 'admin' | 'premium' | null;
+  role: "admin" | "premium" | null;
   createdAt?: string;
 }
 
 export interface CreatePickRequest {
   sportCode: string;
   gameId?: string;
-  tier: 'free' | 'premium';
+  tier: "free" | "premium";
   player: string;
   propType: string;
   propLine: number;
-  side: 'Over' | 'Under';
+  side: "Over" | "Under";
   analysisShort: string;
   analysisLong?: string;
   confidencePct?: number;

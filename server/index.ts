@@ -2,7 +2,13 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { getFreePicks, getPremiumPicks, createPick, updatePick, deletePick } from "./routes/picks";
+import {
+  getFreePicks,
+  getPremiumPicks,
+  createPick,
+  updatePick,
+  deletePick,
+} from "./routes/picks";
 import { getUserRole, updateUserRole, getAllUserRoles } from "./routes/users";
 import { checkConnection } from "./db";
 
@@ -20,7 +26,7 @@ export function createServer() {
     res.json({
       status: "ok",
       database: dbStatus.success ? "connected" : "disconnected",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   });
 

@@ -6,8 +6,8 @@ export const getUserRole: RequestHandler = async (req, res) => {
     const { clerkUserId } = req.params;
 
     const result = await query(
-      'SELECT role FROM user_roles WHERE clerk_user_id = $1',
-      [clerkUserId]
+      "SELECT role FROM user_roles WHERE clerk_user_id = $1",
+      [clerkUserId],
     );
 
     if (result.rows.length === 0) {
@@ -16,8 +16,8 @@ export const getUserRole: RequestHandler = async (req, res) => {
 
     res.json({ role: result.rows[0].role });
   } catch (error) {
-    console.error('Error fetching user role:', error);
-    res.status(500).json({ error: 'Failed to fetch user role' });
+    console.error("Error fetching user role:", error);
+    res.status(500).json({ error: "Failed to fetch user role" });
   }
 };
 
@@ -26,22 +26,28 @@ export const updateUserRole: RequestHandler = async (req, res) => {
     const { clerkUserId } = req.params;
     const { role } = req.body;
 
-    if (!['admin', 'premium'].includes(role)) {
-      return res.status(400).json({ error: 'Invalid role' });
+    if (!["admin", "premium"].includes(role)) {
+      return res.status(400).json({ error: "Invalid role" });
     }
 
-    const result = await query(`
+    const result = await query(
+      `
       INSERT INTO user_roles (clerk_user_id, role)
       VALUES ($1, $2)
       ON CONFLICT (clerk_user_id)
       DO UPDATE SET role = $2
       RETURNING role
-    `, [clerkUserId, role]);
+    `,
+      [clerkUserId, role],
+    );
 
-    res.json({ role: result.rows[0].role, message: 'User role updated successfully' });
+    res.json({
+      role: result.rows[0].role,
+      message: "User role updated successfully",
+    });
   } catch (error) {
-    console.error('Error updating user role:', error);
-    res.status(500).json({ error: 'Failed to update user role' });
+    console.error("Error updating user role:", error);
+    res.status(500).json({ error: "Failed to update user role" });
   }
 };
 
@@ -55,7 +61,7 @@ export const getAllUserRoles: RequestHandler = async (req, res) => {
 
     res.json({ users: result.rows });
   } catch (error) {
-    console.error('Error fetching user roles:', error);
-    res.status(500).json({ error: 'Failed to fetch user roles' });
+    console.error("Error fetching user roles:", error);
+    res.status(500).json({ error: "Failed to fetch user roles" });
   }
 };

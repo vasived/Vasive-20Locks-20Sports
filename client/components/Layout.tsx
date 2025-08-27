@@ -50,9 +50,25 @@ export default function Layout({ children }: LayoutProps) {
 
   const navigation = [
     { name: "Home", href: "/", icon: Home, alwaysVisible: true },
-    { name: "Free Picks", href: "/free-picks", icon: TrendingUp, alwaysVisible: true },
-    { name: "Premium Picks", href: "/premium-picks", icon: Lock, alwaysVisible: true, isPremiumTab: true },
-    { name: "Settings", href: "/settings", icon: Settings, alwaysVisible: true },
+    {
+      name: "Free Picks",
+      href: "/free-picks",
+      icon: TrendingUp,
+      alwaysVisible: true,
+    },
+    {
+      name: "Premium Picks",
+      href: "/premium-picks",
+      icon: Lock,
+      alwaysVisible: true,
+      isPremiumTab: true,
+    },
+    {
+      name: "Settings",
+      href: "/settings",
+      icon: Settings,
+      alwaysVisible: true,
+    },
     { name: "Admin", href: "/admin", icon: Shield, admin: true },
   ];
 

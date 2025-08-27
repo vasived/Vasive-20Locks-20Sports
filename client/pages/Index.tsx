@@ -30,7 +30,10 @@ export default function Index() {
   const [selectedSport, setSelectedSport] = useState("nba");
   const [timeUntilTonightGames, setTimeUntilTonightGames] = useState("");
   const [freePicks, setFreePicks] = useState<Pick[]>([]);
-  const [stats, setStats] = useState<Stats>({ todayGames: 0, activePremiumPicks: 0 });
+  const [stats, setStats] = useState<Stats>({
+    todayGames: 0,
+    activePremiumPicks: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [gamesData, setGamesData] = useState<GameData[]>([]);
 
@@ -41,8 +44,8 @@ export default function Index() {
 
         // Fetch both free and premium picks
         const [freeResponse, premiumResponse] = await Promise.all([
-          fetch('/api/picks/free'),
-          fetch('/api/picks/premium')
+          fetch("/api/picks/free"),
+          fetch("/api/picks/premium"),
         ]);
 
         let freePicks: Pick[] = [];
@@ -62,22 +65,42 @@ export default function Index() {
         // Create mock games data based on current time
         const today = new Date();
         const mockGamesData: GameData[] = [
-          { sport: "NBA", count: 6, nextGameTime: new Date(today.getTime() + 2 * 60 * 60 * 1000).toISOString() },
-          { sport: "MLB", count: 4, nextGameTime: new Date(today.getTime() + 3 * 60 * 60 * 1000).toISOString() },
-          { sport: "NHL", count: 2, nextGameTime: new Date(today.getTime() + 4 * 60 * 60 * 1000).toISOString() },
+          {
+            sport: "NBA",
+            count: 6,
+            nextGameTime: new Date(
+              today.getTime() + 2 * 60 * 60 * 1000,
+            ).toISOString(),
+          },
+          {
+            sport: "MLB",
+            count: 4,
+            nextGameTime: new Date(
+              today.getTime() + 3 * 60 * 60 * 1000,
+            ).toISOString(),
+          },
+          {
+            sport: "NHL",
+            count: 2,
+            nextGameTime: new Date(
+              today.getTime() + 4 * 60 * 60 * 1000,
+            ).toISOString(),
+          },
         ];
 
         setGamesData(mockGamesData);
 
         // Calculate real stats
-        const totalGames = mockGamesData.reduce((sum, game) => sum + game.count, 0);
+        const totalGames = mockGamesData.reduce(
+          (sum, game) => sum + game.count,
+          0,
+        );
         setStats({
           todayGames: totalGames,
           activePremiumPicks: premiumPicks.length,
         });
-
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
         // Set fallback stats
         setStats({
           todayGames: 0,
@@ -235,40 +258,40 @@ export default function Index() {
                   </div>
 
                   <div className="space-y-4">
-                    {gamesData.length > 0 ? gamesData.map((sport) => (
-                      <div
-                        key={sport.sport.toLowerCase()}
-                        className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
-                            {sport.sport.slice(0, 2)}
-                          </div>
-                          <span className="font-medium">{sport.sport}</span>
-                        </div>
-                        <Badge variant="outline">{sport.count} games</Badge>
-                      </div>
-                    )) : (
-                      // Loading or fallback
-                      [
-                        { sport: "NBA", count: 0 },
-                        { sport: "MLB", count: 0 },
-                        { sport: "NHL", count: 0 },
-                      ].map((sport) => (
-                        <div
-                          key={sport.sport.toLowerCase()}
-                          className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
-                              {sport.sport.slice(0, 2)}
+                    {gamesData.length > 0
+                      ? gamesData.map((sport) => (
+                          <div
+                            key={sport.sport.toLowerCase()}
+                            className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
+                                {sport.sport.slice(0, 2)}
+                              </div>
+                              <span className="font-medium">{sport.sport}</span>
                             </div>
-                            <span className="font-medium">{sport.sport}</span>
+                            <Badge variant="outline">{sport.count} games</Badge>
                           </div>
-                          <Badge variant="outline">{sport.count} games</Badge>
-                        </div>
-                      ))
-                    )}
+                        ))
+                      : // Loading or fallback
+                        [
+                          { sport: "NBA", count: 0 },
+                          { sport: "MLB", count: 0 },
+                          { sport: "NHL", count: 0 },
+                        ].map((sport) => (
+                          <div
+                            key={sport.sport.toLowerCase()}
+                            className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
+                                {sport.sport.slice(0, 2)}
+                              </div>
+                              <span className="font-medium">{sport.sport}</span>
+                            </div>
+                            <Badge variant="outline">{sport.count} games</Badge>
+                          </div>
+                        ))}
                   </div>
                 </div>
               </div>
@@ -374,7 +397,9 @@ export default function Index() {
             ))
           ) : (
             <div className="col-span-3 text-center py-12">
-              <p className="text-muted-foreground">No free picks available today.</p>
+              <p className="text-muted-foreground">
+                No free picks available today.
+              </p>
             </div>
           )}
         </div>

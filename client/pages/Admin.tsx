@@ -6,8 +6,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -39,7 +51,7 @@ function hasRole(user: any, role: string): boolean {
 }
 
 interface ExtendedPick extends Pick {
-  result?: 'Pending' | 'Win' | 'Loss';
+  result?: "Pending" | "Win" | "Loss";
   stakePercent?: number;
   analytics?: string;
 }
@@ -49,26 +61,33 @@ export default function Admin() {
   const [picks, setPicks] = useState<ExtendedPick[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterTier, setFilterTier] = useState<"all" | "free" | "premium">("all");
-  const [filterResult, setFilterResult] = useState<"all" | "Pending" | "Win" | "Loss">("all");
+  const [filterTier, setFilterTier] = useState<"all" | "free" | "premium">(
+    "all",
+  );
+  const [filterResult, setFilterResult] = useState<
+    "all" | "Pending" | "Win" | "Loss"
+  >("all");
   const [editingPick, setEditingPick] = useState<ExtendedPick | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   // Form state for create/edit
   const [formData, setFormData] = useState<Partial<CreatePickRequest>>({
-    sportCode: 'nba',
-    tier: 'free',
-    player: '',
-    propType: '',
+    sportCode: "nba",
+    tier: "free",
+    player: "",
+    propType: "",
     propLine: 0,
-    side: 'Over',
-    analysisShort: '',
-    analysisLong: '',
+    side: "Over",
+    analysisShort: "",
+    analysisLong: "",
     confidencePct: 50,
     stakePct: 0.02,
-    odds: '-110',
-    sportsbook: 'DraftKings',
+    odds: "-110",
+    sportsbook: "DraftKings",
   });
 
   const isAdmin = isSignedIn && hasRole(user, "admin");
@@ -83,22 +102,29 @@ export default function Admin() {
     try {
       setLoading(true);
       const [freeResponse, premiumResponse] = await Promise.all([
-        fetch('/api/picks/free'),
-        fetch('/api/picks/premium')
+        fetch("/api/picks/free"),
+        fetch("/api/picks/premium"),
       ]);
 
-      const freeData = freeResponse.ok ? await freeResponse.json() : { picks: [] };
-      const premiumData = premiumResponse.ok ? await premiumResponse.json() : { picks: [] };
+      const freeData = freeResponse.ok
+        ? await freeResponse.json()
+        : { picks: [] };
+      const premiumData = premiumResponse.ok
+        ? await premiumResponse.json()
+        : { picks: [] };
 
       const allPicks = [
-        ...freeData.picks.map((p: Pick) => ({ ...p, tier: 'free' })),
-        ...premiumData.picks.map((p: PremiumPick) => ({ ...p, tier: 'premium' }))
+        ...freeData.picks.map((p: Pick) => ({ ...p, tier: "free" })),
+        ...premiumData.picks.map((p: PremiumPick) => ({
+          ...p,
+          tier: "premium",
+        })),
       ];
 
       setPicks(allPicks);
     } catch (error) {
-      console.error('Error fetching picks:', error);
-      setMessage({ type: 'error', text: 'Failed to fetch picks' });
+      console.error("Error fetching picks:", error);
+      setMessage({ type: "error", text: "Failed to fetch picks" });
     } finally {
       setLoading(false);
     }
@@ -106,99 +132,104 @@ export default function Admin() {
 
   const handleCreatePick = async () => {
     if (!formData.player || !formData.propType || !formData.analysisShort) {
-      setMessage({ type: 'error', text: 'Please fill in all required fields' });
+      setMessage({ type: "error", text: "Please fill in all required fields" });
       return;
     }
 
     try {
       const createData: CreatePickRequest = {
-        ...formData as CreatePickRequest,
+        ...(formData as CreatePickRequest),
         createdByUserId: user!.id,
       };
 
-      const response = await fetch('/api/picks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/picks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(createData),
       });
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Pick created successfully!' });
+        setMessage({ type: "success", text: "Pick created successfully!" });
         setIsCreateModalOpen(false);
         resetForm();
         fetchPicks();
       } else {
-        throw new Error('Failed to create pick');
+        throw new Error("Failed to create pick");
       }
     } catch (error) {
-      console.error('Error creating pick:', error);
-      setMessage({ type: 'error', text: 'Failed to create pick' });
+      console.error("Error creating pick:", error);
+      setMessage({ type: "error", text: "Failed to create pick" });
     }
   };
 
-  const handleUpdatePick = async (pickId: string, updates: Partial<ExtendedPick>) => {
+  const handleUpdatePick = async (
+    pickId: string,
+    updates: Partial<ExtendedPick>,
+  ) => {
     try {
       const response = await fetch(`/api/picks/${pickId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
       });
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Pick updated successfully!' });
+        setMessage({ type: "success", text: "Pick updated successfully!" });
         fetchPicks();
       } else {
-        throw new Error('Failed to update pick');
+        throw new Error("Failed to update pick");
       }
     } catch (error) {
-      console.error('Error updating pick:', error);
-      setMessage({ type: 'error', text: 'Failed to update pick' });
+      console.error("Error updating pick:", error);
+      setMessage({ type: "error", text: "Failed to update pick" });
     }
   };
 
   const handleDeletePick = async (pickId: string) => {
-    if (!confirm('Are you sure you want to delete this pick?')) return;
+    if (!confirm("Are you sure you want to delete this pick?")) return;
 
     try {
       const response = await fetch(`/api/picks/${pickId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Pick deleted successfully!' });
+        setMessage({ type: "success", text: "Pick deleted successfully!" });
         fetchPicks();
       } else {
-        throw new Error('Failed to delete pick');
+        throw new Error("Failed to delete pick");
       }
     } catch (error) {
-      console.error('Error deleting pick:', error);
-      setMessage({ type: 'error', text: 'Failed to delete pick' });
+      console.error("Error deleting pick:", error);
+      setMessage({ type: "error", text: "Failed to delete pick" });
     }
   };
 
   const resetForm = () => {
     setFormData({
-      sportCode: 'nba',
-      tier: 'free',
-      player: '',
-      propType: '',
+      sportCode: "nba",
+      tier: "free",
+      player: "",
+      propType: "",
       propLine: 0,
-      side: 'Over',
-      analysisShort: '',
-      analysisLong: '',
+      side: "Over",
+      analysisShort: "",
+      analysisLong: "",
       confidencePct: 50,
       stakePct: 0.02,
-      odds: '-110',
-      sportsbook: 'DraftKings',
+      odds: "-110",
+      sportsbook: "DraftKings",
     });
   };
 
-  const filteredPicks = picks.filter(pick => {
-    const matchesSearch = pick.player.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         pick.propType.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredPicks = picks.filter((pick) => {
+    const matchesSearch =
+      pick.player.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pick.propType.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTier = filterTier === "all" || pick.tier === filterTier;
-    const matchesResult = filterResult === "all" || pick.result === filterResult;
-    
+    const matchesResult =
+      filterResult === "all" || pick.result === filterResult;
+
     return matchesSearch && matchesTier && matchesResult;
   });
 
@@ -209,7 +240,14 @@ export default function Admin() {
       case "Loss":
         return <Badge className="bg-red-600 hover:bg-red-700">L</Badge>;
       default:
-        return <Badge variant="outline" className="border-yellow-500 text-yellow-600">Pending</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="border-yellow-500 text-yellow-600"
+          >
+            Pending
+          </Badge>
+        );
     }
   };
 
@@ -220,8 +258,12 @@ export default function Admin() {
           <Card>
             <CardContent className="pt-6">
               <Shield className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
-              <h2 className="text-2xl font-bold mb-2">Authentication Required</h2>
-              <p className="text-muted-foreground">Please sign in to access the admin dashboard.</p>
+              <h2 className="text-2xl font-bold mb-2">
+                Authentication Required
+              </h2>
+              <p className="text-muted-foreground">
+                Please sign in to access the admin dashboard.
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -260,7 +302,7 @@ export default function Admin() {
               Admin
             </Badge>
           </div>
-          
+
           <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
             <DialogTrigger asChild>
               <Button className="bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90">
@@ -276,7 +318,12 @@ export default function Admin() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>Sport</Label>
-                    <Select value={formData.sportCode} onValueChange={(value) => setFormData({...formData, sportCode: value})}>
+                    <Select
+                      value={formData.sportCode}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, sportCode: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -290,7 +337,12 @@ export default function Admin() {
                   </div>
                   <div>
                     <Label>Tier</Label>
-                    <Select value={formData.tier} onValueChange={(value: 'free' | 'premium') => setFormData({...formData, tier: value})}>
+                    <Select
+                      value={formData.tier}
+                      onValueChange={(value: "free" | "premium") =>
+                        setFormData({ ...formData, tier: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -301,22 +353,26 @@ export default function Admin() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div>
                   <Label>Player Name *</Label>
                   <Input
                     value={formData.player}
-                    onChange={(e) => setFormData({...formData, player: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, player: e.target.value })
+                    }
                     placeholder="e.g., Stephen Curry"
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <Label>Prop Type *</Label>
                     <Input
                       value={formData.propType}
-                      onChange={(e) => setFormData({...formData, propType: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, propType: e.target.value })
+                      }
                       placeholder="e.g., Points"
                     />
                   </div>
@@ -326,12 +382,22 @@ export default function Admin() {
                       type="number"
                       step="0.5"
                       value={formData.propLine}
-                      onChange={(e) => setFormData({...formData, propLine: parseFloat(e.target.value)})}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          propLine: parseFloat(e.target.value),
+                        })
+                      }
                     />
                   </div>
                   <div>
                     <Label>Side</Label>
-                    <Select value={formData.side} onValueChange={(value: 'Over' | 'Under') => setFormData({...formData, side: value})}>
+                    <Select
+                      value={formData.side}
+                      onValueChange={(value: "Over" | "Under") =>
+                        setFormData({ ...formData, side: value })
+                      }
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -342,29 +408,39 @@ export default function Admin() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div>
                   <Label>Short Analysis *</Label>
                   <Textarea
                     value={formData.analysisShort}
-                    onChange={(e) => setFormData({...formData, analysisShort: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        analysisShort: e.target.value,
+                      })
+                    }
                     placeholder="Brief analysis for all users"
                     rows={3}
                   />
                 </div>
-                
-                {formData.tier === 'premium' && (
+
+                {formData.tier === "premium" && (
                   <>
                     <div>
                       <Label>Long Analysis (Premium)</Label>
                       <Textarea
-                        value={formData.analysisLong || ''}
-                        onChange={(e) => setFormData({...formData, analysisLong: e.target.value})}
+                        value={formData.analysisLong || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            analysisLong: e.target.value,
+                          })
+                        }
                         placeholder="Detailed analysis for premium users"
                         rows={4}
                       />
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label>Confidence %</Label>
@@ -373,7 +449,12 @@ export default function Admin() {
                           min="0"
                           max="100"
                           value={formData.confidencePct}
-                          onChange={(e) => setFormData({...formData, confidencePct: parseInt(e.target.value)})}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              confidencePct: parseInt(e.target.value),
+                            })
+                          }
                         />
                       </div>
                       <div>
@@ -384,19 +465,26 @@ export default function Admin() {
                           min="0"
                           max="1"
                           value={formData.stakePct}
-                          onChange={(e) => setFormData({...formData, stakePct: parseFloat(e.target.value)})}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              stakePct: parseFloat(e.target.value),
+                            })
+                          }
                         />
                       </div>
                     </div>
                   </>
                 )}
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>Odds</Label>
                     <Input
                       value={formData.odds}
-                      onChange={(e) => setFormData({...formData, odds: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, odds: e.target.value })
+                      }
                       placeholder="-110"
                     />
                   </div>
@@ -404,14 +492,19 @@ export default function Admin() {
                     <Label>Sportsbook</Label>
                     <Input
                       value={formData.sportsbook}
-                      onChange={(e) => setFormData({...formData, sportsbook: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, sportsbook: e.target.value })
+                      }
                       placeholder="DraftKings"
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end space-x-2 pt-4">
-                  <Button variant="outline" onClick={() => setIsCreateModalOpen(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsCreateModalOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button onClick={handleCreatePick}>
@@ -423,15 +516,21 @@ export default function Admin() {
             </DialogContent>
           </Dialog>
         </div>
-        
+
         {message && (
-          <Alert className={`mt-4 ${message.type === 'success' ? 'border-green-500' : 'border-red-500'}`}>
-            {message.type === 'success' ? (
+          <Alert
+            className={`mt-4 ${message.type === "success" ? "border-green-500" : "border-red-500"}`}
+          >
+            {message.type === "success" ? (
               <CheckCircle className="h-4 w-4 text-green-500" />
             ) : (
               <AlertCircle className="h-4 w-4 text-red-500" />
             )}
-            <AlertDescription className={message.type === 'success' ? 'text-green-700' : 'text-red-700'}>
+            <AlertDescription
+              className={
+                message.type === "success" ? "text-green-700" : "text-red-700"
+              }
+            >
               {message.text}
             </AlertDescription>
           </Alert>
@@ -451,38 +550,44 @@ export default function Admin() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center">
               <Star className="h-8 w-8 text-yellow-500 mr-3" />
               <div>
                 <p className="text-sm text-muted-foreground">Free Picks</p>
-                <p className="text-2xl font-bold">{picks.filter(p => p.tier === 'free').length}</p>
+                <p className="text-2xl font-bold">
+                  {picks.filter((p) => p.tier === "free").length}
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center">
               <BarChart3 className="h-8 w-8 text-brand-purple mr-3" />
               <div>
                 <p className="text-sm text-muted-foreground">Premium Picks</p>
-                <p className="text-2xl font-bold">{picks.filter(p => p.tier === 'premium').length}</p>
+                <p className="text-2xl font-bold">
+                  {picks.filter((p) => p.tier === "premium").length}
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center">
               <CheckCircle className="h-8 w-8 text-green-500 mr-3" />
               <div>
                 <p className="text-sm text-muted-foreground">Won Picks</p>
-                <p className="text-2xl font-bold">{picks.filter(p => p.result === 'Win').length}</p>
+                <p className="text-2xl font-bold">
+                  {picks.filter((p) => p.result === "Win").length}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -504,8 +609,13 @@ export default function Admin() {
                 />
               </div>
             </div>
-            
-            <Select value={filterTier} onValueChange={(value: "all" | "free" | "premium") => setFilterTier(value)}>
+
+            <Select
+              value={filterTier}
+              onValueChange={(value: "all" | "free" | "premium") =>
+                setFilterTier(value)
+              }
+            >
               <SelectTrigger className="w-[140px]">
                 <SelectValue />
               </SelectTrigger>
@@ -515,8 +625,13 @@ export default function Admin() {
                 <SelectItem value="premium">Premium Only</SelectItem>
               </SelectContent>
             </Select>
-            
-            <Select value={filterResult} onValueChange={(value: "all" | "Pending" | "Win" | "Loss") => setFilterResult(value)}>
+
+            <Select
+              value={filterResult}
+              onValueChange={(value: "all" | "Pending" | "Win" | "Loss") =>
+                setFilterResult(value)
+              }
+            >
               <SelectTrigger className="w-[140px]">
                 <SelectValue />
               </SelectTrigger>
@@ -552,15 +667,21 @@ export default function Admin() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-semibold">{pick.player}</h3>
-                      <Badge variant={pick.tier === 'premium' ? 'default' : 'outline'}>
+                      <Badge
+                        variant={
+                          pick.tier === "premium" ? "default" : "outline"
+                        }
+                      >
                         {pick.tier}
                       </Badge>
                       {getResultBadge(pick.result)}
-                      <Badge variant="outline">{pick.sport || 'NBA'}</Badge>
+                      <Badge variant="outline">{pick.sport || "NBA"}</Badge>
                     </div>
-                    
+
                     <div className="text-sm text-muted-foreground mb-2">
-                      <span className="font-medium">{pick.propType} {pick.side} {pick.line}</span>
+                      <span className="font-medium">
+                        {pick.propType} {pick.side} {pick.line}
+                      </span>
                       {pick.game && (
                         <span className="ml-3">
                           <Calendar className="inline h-3 w-3 mr-1" />
@@ -568,22 +689,28 @@ export default function Admin() {
                         </span>
                       )}
                     </div>
-                    
-                    <p className="text-sm text-muted-foreground">{pick.analysis}</p>
-                    
-                    {pick.tier === 'premium' && (
+
+                    <p className="text-sm text-muted-foreground">
+                      {pick.analysis}
+                    </p>
+
+                    {pick.tier === "premium" && (
                       <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
                         <span>Confidence: {pick.confidence}%</span>
-                        {pick.stakePercent && <span>Stake: {(pick.stakePercent * 100).toFixed(1)}%</span>}
+                        {pick.stakePercent && (
+                          <span>
+                            Stake: {(pick.stakePercent * 100).toFixed(1)}%
+                          </span>
+                        )}
                         {pick.odds && <span>Odds: {pick.odds}</span>}
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center gap-2 ml-4">
                     <Select
-                      value={pick.result || 'Pending'}
-                      onValueChange={(value: 'Pending' | 'Win' | 'Loss') => 
+                      value={pick.result || "Pending"}
+                      onValueChange={(value: "Pending" | "Win" | "Loss") =>
                         handleUpdatePick(pick.id, { result: value })
                       }
                     >
@@ -596,7 +723,7 @@ export default function Admin() {
                         <SelectItem value="Loss">Loss</SelectItem>
                       </SelectContent>
                     </Select>
-                    
+
                     <Button
                       variant="outline"
                       size="sm"
@@ -604,7 +731,7 @@ export default function Admin() {
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    
+
                     <Button
                       variant="outline"
                       size="sm"
@@ -618,14 +745,16 @@ export default function Admin() {
               </CardContent>
             </Card>
           ))}
-          
+
           {filteredPicks.length === 0 && !loading && (
             <Card>
               <CardContent className="p-12 text-center">
                 <TrendingUp className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
                 <h3 className="text-lg font-semibold mb-2">No picks found</h3>
                 <p className="text-muted-foreground">
-                  {picks.length === 0 ? 'Create your first pick to get started.' : 'Try adjusting your filters.'}
+                  {picks.length === 0
+                    ? "Create your first pick to get started."
+                    : "Try adjusting your filters."}
                 </p>
               </CardContent>
             </Card>

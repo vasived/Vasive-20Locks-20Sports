@@ -37,8 +37,8 @@ const sortOptions = [
 ];
 
 function formatGameTime(tipoffTime: string) {
-  if (!tipoffTime || tipoffTime === 'TBD') return 'TBD';
-  
+  if (!tipoffTime || tipoffTime === "TBD") return "TBD";
+
   try {
     const date = new Date(tipoffTime);
     const now = new Date();
@@ -69,8 +69,8 @@ function formatGameTime(tipoffTime: string) {
 }
 
 function getTimeUntilGame(tipoffTime: string) {
-  if (!tipoffTime || tipoffTime === 'TBD') return 'TBD';
-  
+  if (!tipoffTime || tipoffTime === "TBD") return "TBD";
+
   try {
     const now = new Date();
     const gameTime = new Date(tipoffTime);
@@ -88,7 +88,7 @@ function getTimeUntilGame(tipoffTime: string) {
 
     return `${hours}h ${minutes}m`;
   } catch {
-    return 'TBD';
+    return "TBD";
   }
 }
 
@@ -104,7 +104,7 @@ export default function FreePicks() {
     const fetchFreePicks = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/picks/free');
+        const response = await fetch("/api/picks/free");
         if (response.ok) {
           const data = await response.json();
           // Transform API data to match expected format
@@ -118,7 +118,7 @@ export default function FreePicks() {
           setFreePicks(transformedPicks);
         }
       } catch (error) {
-        console.error('Error fetching free picks:', error);
+        console.error("Error fetching free picks:", error);
       } finally {
         setLoading(false);
       }
@@ -266,7 +266,7 @@ export default function FreePicks() {
                     <CardTitle className="text-lg flex items-center gap-2">
                       {pick.player}
                       <Badge variant="outline" className="text-xs">
-                        {pick.sport || 'NBA'}
+                        {pick.sport || "NBA"}
                       </Badge>
                     </CardTitle>
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -337,11 +337,16 @@ export default function FreePicks() {
                   {expandedPick === pick.id && (
                     <div className="pt-2 border-t border-border">
                       <div className="text-xs text-muted-foreground space-y-1">
-                        <div>Venue: {pick.venue || 'TBD'}</div>
+                        <div>Venue: {pick.venue || "TBD"}</div>
                         {pick.odds && <div>Odds: {pick.odds}</div>}
-                        {pick.sportsbook && <div>Sportsbook: {pick.sportsbook}</div>}
+                        {pick.sportsbook && (
+                          <div>Sportsbook: {pick.sportsbook}</div>
+                        )}
                         <div>
-                          Added: {pick.created ? new Date(pick.created).toLocaleDateString() : 'Today'}
+                          Added:{" "}
+                          {pick.created
+                            ? new Date(pick.created).toLocaleDateString()
+                            : "Today"}
                         </div>
                       </div>
                     </div>
@@ -381,7 +386,9 @@ export default function FreePicks() {
             </div>
             <h3 className="text-lg font-semibold mb-2">No picks found</h3>
             <p className="text-muted-foreground mb-4">
-              {freePicks.length === 0 ? 'No free picks available yet. Check back soon!' : 'Try adjusting your filters or search terms.'}
+              {freePicks.length === 0
+                ? "No free picks available yet. Check back soon!"
+                : "Try adjusting your filters or search terms."}
             </p>
             {freePicks.length > 0 && (
               <Button
@@ -411,7 +418,11 @@ export default function FreePicks() {
             className="bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90 text-white"
             asChild
           >
-            <a href="https://discord.gg/V7Yg3BhrFU" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://discord.gg/V7Yg3BhrFU"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Join Discord to Become Premium
             </a>
           </Button>
