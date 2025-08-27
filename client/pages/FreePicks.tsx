@@ -178,9 +178,38 @@ export default function FreePicks() {
   const [sortBy, setSortBy] = useState("confidence");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedPick, setExpandedPick] = useState<string | null>(null);
+  const [freePicks, setFreePicks] = useState<ExtendedPick[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFreePicks = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/picks/free');
+        if (response.ok) {
+          const data = await response.json();
+          // Transform API data to match expected format
+          const transformedPicks = (data.picks || []).map((pick: Pick) => ({
+            ...pick,
+            gameShort: pick.game, // Use game field as gameShort
+            venue: "TBD", // Default venue since not in current schema
+            created: new Date().toISOString(), // Default to current time
+            tipoff: pick.tipoff || new Date().toISOString(), // Ensure tipoff exists
+          }));
+          setFreePicks(transformedPicks);
+        }
+      } catch (error) {
+        console.error('Error fetching free picks:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFreePicks();
+  }, []);
 
   const filteredAndSortedPicks = useMemo(() => {
-    let filtered = mockFreePicks;
+    let filtered = freePicks;
 
     // Filter by sport
     if (selectedSport !== "All Sports") {
@@ -285,7 +314,22 @@ export default function FreePicks() {
 
       {/* Picks Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {filteredAndSortedPicks.map((pick, index) => (
+        {loading ? (
+          // Loading skeleton
+          Array.from({ length: 6 }).map((_, index) => (
+            <Card key={index} className="animate-pulse">
+              <CardHeader className="pb-3">
+                <div className="h-6 bg-muted rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-muted rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="h-16 bg-muted rounded"></div>
+                <div className="h-8 bg-muted rounded"></div>
+                <div className="h-12 bg-muted rounded"></div>
+              </CardContent>
+            </Card>
+          ))
+        ) : filteredAndSortedPicks.map((pick, index) => (
           <Card
             key={pick.id}
             className="group hover:shadow-lg transition-all duration-200 animate-slide-up cursor-pointer"
@@ -409,7 +453,7 @@ export default function FreePicks() {
       </div>
 
       {/* No Results */}
-      {filteredAndSortedPicks.length === 0 && (
+      {!loading && filteredAndSortedPicks.length === 0 && (
         <div className="text-center py-12">
           <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
             <Search className="h-8 w-8 text-muted-foreground" />
