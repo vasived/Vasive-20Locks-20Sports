@@ -38,6 +38,12 @@ function isPremiumUser(user: any): boolean {
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
+
+  // Derive user status from Clerk
+  const isAdmin = isSignedIn && hasRole(user, 'admin');
+  const isPremium = isSignedIn && isPremiumUser(user);
 
   const navigation = [
     { name: "Free Picks", href: "/free-picks", icon: TrendingUp, public: true },
