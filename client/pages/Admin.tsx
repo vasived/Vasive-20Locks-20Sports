@@ -73,6 +73,7 @@ export default function Admin() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [updatingPicks, setUpdatingPicks] = useState<Set<string>>(new Set());
 
   // Form state for create/edit
   const [formData, setFormData] = useState<Partial<CreatePickRequest>>({
