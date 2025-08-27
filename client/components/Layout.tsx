@@ -1,16 +1,24 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Lock, 
-  TrendingUp, 
-  Calendar, 
-  Settings, 
+import {
+  Lock,
+  TrendingUp,
+  Calendar,
+  Settings,
   Shield,
   Menu,
   X
 } from "lucide-react";
 import { useState } from "react";
+import {
+  useUser,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  SignOutButton,
+  useClerk
+} from "@clerk/clerk-react";
 
 interface LayoutProps {
   children: React.ReactNode;
