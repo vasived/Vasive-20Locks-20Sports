@@ -1,7 +1,6 @@
 import "./global.css";
 
 import { Toaster } from "@/components/ui/toaster";
-import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -31,51 +30,51 @@ if (!PUBLISHABLE_KEY) {
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/free-picks" element={<FreePicks />} />
-              <Route
-                path="/premium-picks"
-                element={
-                  <RequirePremium>
-                    <PremiumPicks />
-                  </RequirePremium>
-                }
-              />
-              <Route
-                path="/admin"
-                element={
-                  <RequireAdmin>
-                    <Admin />
-                  </RequireAdmin>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <RequireAuth>
-                    <Settings />
-                  </RequireAuth>
-                }
-              />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/research/:gameId" element={<Research />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ClerkProvider>
-);
-
-createRoot(document.getElementById("root")!).render(<App />);
+export default function App() {
+  return (
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/free-picks" element={<FreePicks />} />
+                <Route
+                  path="/premium-picks"
+                  element={
+                    <RequirePremium>
+                      <PremiumPicks />
+                    </RequirePremium>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <RequireAdmin>
+                      <Admin />
+                    </RequireAdmin>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <RequireAuth>
+                      <Settings />
+                    </RequireAuth>
+                  }
+                />
+                <Route path="/schedule" element={<Schedule />} />
+                <Route path="/research/:gameId" element={<Research />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ClerkProvider>
+  );
+}
