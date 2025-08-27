@@ -277,158 +277,131 @@ export default function PremiumPicks() {
 
       {/* Premium Picks Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {mockPremiumPicks.map((pick, index) => (
-          <Card
-            key={pick.id}
-            className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-brand-purple/20"
-            onClick={() =>
-              setExpandedPick(expandedPick === pick.id ? null : pick.id)
-            }
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <CardTitle className="text-lg flex items-center gap-3">
-                    {pick.player}
-                    <Badge variant="outline" className="text-xs">
-                      {pick.sport}
+        {loading ? (
+          // Loading skeleton
+          Array.from({ length: 4 }).map((_, index) => (
+            <Card key={index} className="animate-pulse border-brand-purple/20">
+              <CardHeader className="pb-3">
+                <div className="h-6 bg-muted rounded w-3/4"></div>
+                <div className="h-4 bg-muted rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="h-16 bg-muted rounded"></div>
+                <div className="h-8 bg-muted rounded"></div>
+                <div className="h-12 bg-muted rounded"></div>
+              </CardContent>
+            </Card>
+          ))
+        ) : premiumPicks.length > 0 ? (
+          premiumPicks.map((pick, index) => (
+            <Card
+              key={pick.id}
+              className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-brand-purple/20"
+              onClick={() =>
+                setExpandedPick(expandedPick === pick.id ? null : pick.id)
+              }
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <CardTitle className="text-lg flex items-center gap-3">
+                      {pick.player}
+                      <Badge variant="outline" className="text-xs">
+                        {pick.sport || 'NBA'}
+                      </Badge>
+                      {getResultBadge(pick.result)}
+                    </CardTitle>
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      <Calendar className="h-4 w-4" />
+                      <span>{pick.game}</span>
+                      <span>•</span>
+                      <span>{pick.tipoff}</span>
+                    </div>
+                  </div>
+
+                  <div className="text-right space-y-1">
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                      <span className="text-sm font-medium">
+                        {pick.confidence}%
+                      </span>
+                    </div>
+                    <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-xs">
+                      Premium
                     </Badge>
-                    {getResultBadge(pick.result)}
-                  </CardTitle>
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>{pick.gameShort}</span>
-                    <span>•</span>
-                    <span>{formatGameTime(pick.tipoff)}</span>
                   </div>
                 </div>
+              </CardHeader>
 
-                <div className="text-right space-y-1">
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                    <span className="text-sm font-medium">
-                      {pick.confidence}%
-                    </span>
-                  </div>
-                  <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-xs">
-                    Premium
-                  </Badge>
-                </div>
-              </div>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-              {/* Pick Details */}
-              <div className="flex items-center justify-center p-4 bg-gradient-to-r from-brand-purple/10 to-brand-blue/10 rounded-lg border border-brand-purple/20">
-                <div className="text-center">
-                  <div className="text-lg font-semibold">
-                    {pick.propType} {pick.side} {pick.line}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {pick.odds} • {pick.sportsbook}
-                  </div>
-                </div>
-              </div>
-
-              {/* Confidence Bar */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Confidence</span>
-                  <span className="font-medium">{pick.confidence}%</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-brand-purple to-brand-blue h-2 rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${pick.confidence}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Stake Calculation */}
-              <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                <span className="text-sm font-medium">Recommended Stake</span>
-                <div className="text-right">
-                  <div className="font-semibold text-brand-blue">
-                    {formatStake(pick.stakePercentage)}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {pick.stakePercentage}% of bankroll
-                  </div>
-                </div>
-              </div>
-
-              {/* Analysis */}
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {pick.analysis}
-                </p>
-              </div>
-
-              {/* Advanced Analytics - Expandable */}
-              {expandedPick === pick.id && (
-                <div className="space-y-4 border-t border-border pt-4">
-                  <h4 className="font-semibold flex items-center gap-2">
-                    <BarChart3 className="h-4 w-4" />
-                    Advanced Analytics
-                  </h4>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">
-                        Last 10 Trend:
-                      </span>
-                      <div className="font-medium">
-                        {pick.advancedAnalytics.last10Trend}
-                      </div>
+              <CardContent className="space-y-4">
+                {/* Pick Details */}
+                <div className="flex items-center justify-center p-4 bg-gradient-to-r from-brand-purple/10 to-brand-blue/10 rounded-lg border border-brand-purple/20">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold">
+                      {pick.propType} {pick.side} {pick.line}
                     </div>
-                    <div>
-                      <span className="text-muted-foreground">Matchup:</span>
-                      <div className="font-medium">
-                        {pick.advancedAnalytics.matchupRank}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">
-                        Pace/Minutes:
-                      </span>
-                      <div className="font-medium">
-                        {pick.advancedAnalytics.pace}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">
-                        Defense Rank:
-                      </span>
-                      <div className="font-medium">
-                        {pick.advancedAnalytics.defenseRank}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Alternative Lines */}
-                  <div>
-                    <h5 className="font-medium mb-2">Alternative Lines</h5>
-                    <div className="grid grid-cols-3 gap-2">
-                      {pick.alternateLines.map((alt, idx) => (
-                        <div
-                          key={idx}
-                          className="text-center p-2 bg-muted/30 rounded text-xs"
-                        >
-                          <div className="font-medium">
-                            {pick.side} {alt.line}
-                          </div>
-                          <div className="text-muted-foreground">
-                            {alt.odds}
-                          </div>
-                        </div>
-                      ))}
+                    <div className="text-sm text-muted-foreground">
+                      {pick.odds || '-110'} ��� {pick.sportsbook || 'Various'}
                     </div>
                   </div>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+
+                {/* Confidence Bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Confidence</span>
+                    <span className="font-medium">{pick.confidence}%</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-brand-purple to-brand-blue h-2 rounded-full transition-all duration-1000 ease-out"
+                      style={{ width: `${pick.confidence}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Stake Calculation */}
+                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                  <span className="text-sm font-medium">Recommended Stake</span>
+                  <div className="text-right">
+                    <div className="font-semibold text-brand-blue">
+                      {formatStake(pick.stakePercent * 100)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {(pick.stakePercent * 100).toFixed(1)}% of bankroll
+                    </div>
+                  </div>
+                </div>
+
+                {/* Analysis */}
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {pick.analysis}
+                  </p>
+                </div>
+
+                {/* Advanced Analytics - Expandable */}
+                {expandedPick === pick.id && pick.analytics && (
+                  <div className="space-y-4 border-t border-border pt-4">
+                    <h4 className="font-semibold flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4" />
+                      Advanced Analytics
+                    </h4>
+                    <div className="text-sm text-muted-foreground leading-relaxed">
+                      {pick.analytics}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <div className="col-span-2 text-center py-12">
+            <Crown className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
+            <h3 className="text-lg font-semibold mb-2">No Premium Picks Available</h3>
+            <p className="text-muted-foreground">Check back soon for new premium picks from our analysts.</p>
+          </div>
+        )}
       </div>
 
       {/* Action Buttons */}
