@@ -8,7 +8,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import Layout from "./components/Layout";
-import { RequireAuth, RequirePremium, RequireAdmin } from "./components/ProtectedRoute";
+import {
+  RequireAuth,
+  RequirePremium,
+  RequireAdmin,
+} from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import FreePicks from "./pages/FreePicks";
 import PremiumPicks from "./pages/PremiumPicks";
@@ -22,7 +26,7 @@ import NotFound from "./pages/NotFound";
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Publishable Key")
+  throw new Error("Missing Publishable Key");
 }
 
 const queryClient = new QueryClient();
@@ -36,28 +40,37 @@ const App = () => (
         <BrowserRouter>
           <Layout>
             <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/free-picks" element={<FreePicks />} />
-            <Route path="/premium-picks" element={
-              <RequirePremium>
-                <PremiumPicks />
-              </RequirePremium>
-            } />
-            <Route path="/admin" element={
-              <RequireAdmin>
-                <Admin />
-              </RequireAdmin>
-            } />
-            <Route path="/settings" element={
-              <RequireAuth>
-                <Settings />
-              </RequireAuth>
-            } />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/research/:gameId" element={<Research />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/free-picks" element={<FreePicks />} />
+              <Route
+                path="/premium-picks"
+                element={
+                  <RequirePremium>
+                    <PremiumPicks />
+                  </RequirePremium>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <RequireAdmin>
+                    <Admin />
+                  </RequireAdmin>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <RequireAuth>
+                    <Settings />
+                  </RequireAuth>
+                }
+              />
+              <Route path="/schedule" element={<Schedule />} />
+              <Route path="/research/:gameId" element={<Research />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </Layout>
         </BrowserRouter>
       </TooltipProvider>

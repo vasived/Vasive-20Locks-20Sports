@@ -15,7 +15,7 @@ export default function Research() {
         "Expert analysis and key insights",
         "Alternative betting lines and markets",
         "Real-time odds comparison across sportsbooks",
-        "Social sentiment and public betting trends"
+        "Social sentiment and public betting trends",
       ]}
     />
   );

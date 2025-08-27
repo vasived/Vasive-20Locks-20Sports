@@ -12,13 +12,13 @@ interface PlaceholderPageProps {
   adminRequired?: boolean;
 }
 
-export default function PlaceholderPage({ 
-  title, 
-  description, 
+export default function PlaceholderPage({
+  title,
+  description,
   features = [],
   authRequired = false,
   premiumRequired = false,
-  adminRequired = false
+  adminRequired = false,
 }: PlaceholderPageProps) {
   return (
     <div className="container mx-auto px-4 py-12">
@@ -28,7 +28,7 @@ export default function PlaceholderPage({
           <div className="w-16 h-16 mx-auto bg-gradient-to-br from-brand-blue to-brand-purple rounded-full flex items-center justify-center">
             <Construction className="h-8 w-8 text-white" />
           </div>
-          
+
           <h1 className="text-3xl font-bold">{title}</h1>
           <p className="text-lg text-muted-foreground">{description}</p>
         </div>
@@ -71,7 +71,10 @@ export default function PlaceholderPage({
             <CardContent>
               <ul className="space-y-2 text-left">
                 {features.map((feature, index) => (
-                  <li key={index} className="flex items-center space-x-2 text-sm">
+                  <li
+                    key={index}
+                    className="flex items-center space-x-2 text-sm"
+                  >
                     <div className="w-2 h-2 bg-accent rounded-full" />
                     <span>{feature}</span>
                   </li>
@@ -86,10 +89,10 @@ export default function PlaceholderPage({
           <CardContent className="pt-6">
             <h3 className="font-semibold mb-2">🚧 Page Under Development</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              This page is currently being built. Continue prompting to help 
+              This page is currently being built. Continue prompting to help
               prioritize and implement the features you need most.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button variant="outline" asChild>
                 <Link to="/">
@@ -97,10 +100,8 @@ export default function PlaceholderPage({
                   Back to Home
                 </Link>
               </Button>
-              
-              <Button 
-                className="bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90 text-white"
-              >
+
+              <Button className="bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90 text-white">
                 Request Implementation
               </Button>
             </div>

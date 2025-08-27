@@ -16,7 +16,7 @@ export default function Settings() {
         "Export betting data and reports",
         "Account security and privacy settings",
         "Connect external sportsbook accounts",
-        "Custom alerts and pick notifications"
+        "Custom alerts and pick notifications",
       ]}
     />
   );

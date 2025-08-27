@@ -17,7 +17,7 @@ export default function Admin() {
         "User role management and permissions",
         "Analytics dashboard and performance metrics",
         "Bulk import/export tools",
-        "Audit logs and change tracking"
+        "Audit logs and change tracking",
       ]}
     />
   );

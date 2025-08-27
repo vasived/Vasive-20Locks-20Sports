@@ -11,7 +11,7 @@ import {
   BarChart3,
   Clock,
   DollarSign,
-  Crown
+  Crown,
 } from "lucide-react";
 
 // Mock premium picks data
@@ -28,22 +28,23 @@ const mockPremiumPicks = [
     sport: "NBA",
     confidence: 89,
     stakePercentage: 3.5,
-    analysis: "Luka has been exceptional in his last 10 games, averaging 32.8 points and 9.2 assists. Phoenix allows the 5th most points to PGs this season.",
+    analysis:
+      "Luka has been exceptional in his last 10 games, averaging 32.8 points and 9.2 assists. Phoenix allows the 5th most points to PGs this season.",
     advancedAnalytics: {
       last10Trend: "+12.3 vs line average",
       matchupRank: "Top 3 opponent for PG scoring",
       pace: "102.4 (Above average)",
       minutes: "36.2 projected",
-      defenseRank: "22nd vs Guards"
+      defenseRank: "22nd vs Guards",
     },
     alternateLines: [
       { line: 44.5, odds: "+105" },
       { line: 46.5, odds: "-125" },
-      { line: 47.5, odds: "-145" }
+      { line: 47.5, odds: "-145" },
     ],
     odds: "-110",
     sportsbook: "DraftKings",
-    result: "Pending"
+    result: "Pending",
   },
   {
     id: "premium-2",
@@ -57,23 +58,24 @@ const mockPremiumPicks = [
     sport: "MLB",
     confidence: 76,
     stakePercentage: 2.0,
-    analysis: "Ohtani has recorded 9+ strikeouts in 7 of his last 10 starts. Seattle ranks 28th in contact rate vs righties.",
+    analysis:
+      "Ohtani has recorded 9+ strikeouts in 7 of his last 10 starts. Seattle ranks 28th in contact rate vs righties.",
     advancedAnalytics: {
       last10Trend: "+1.8 strikeouts vs average",
       matchupRank: "Favorable - SEA strikes out 24.8% vs RHP",
       pace: "N/A",
       minutes: "~95 pitches projected",
-      defenseRank: "Bottom 5 contact rate"
+      defenseRank: "Bottom 5 contact rate",
     },
     alternateLines: [
       { line: 7.5, odds: "-165" },
       { line: 9.5, odds: "+140" },
-      { line: 10.5, odds: "+220" }
+      { line: 10.5, odds: "+220" },
     ],
     odds: "-115",
     sportsbook: "FanDuel",
-    result: "Win"
-  }
+    result: "Win",
+  },
 ];
 
 export default function PremiumPicks() {
@@ -83,11 +85,13 @@ export default function PremiumPicks() {
 
   function formatGameTime(tipoffTime: string) {
     const date = new Date(tipoffTime);
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZone: 'America/New_York'
-    }) + ' EST';
+    return (
+      date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZone: "America/New_York",
+      }) + " EST"
+    );
   }
 
   function getResultBadge(result: string) {
@@ -97,7 +101,14 @@ export default function PremiumPicks() {
       case "Loss":
         return <Badge className="bg-red-600 hover:bg-red-700">L</Badge>;
       default:
-        return <Badge variant="outline" className="border-yellow-500 text-yellow-600">Pending</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="border-yellow-500 text-yellow-600"
+          >
+            Pending
+          </Badge>
+        );
     }
   }
 
@@ -113,10 +124,14 @@ export default function PremiumPicks() {
           </Badge>
         </div>
         <p className="text-muted-foreground">
-          Advanced analytics, confidence ratings, and expert insights for our premium subscribers.
+          Advanced analytics, confidence ratings, and expert insights for our
+          premium subscribers.
           {bankroll > 0 && (
             <span className="block mt-1">
-              Current bankroll: <span className="font-semibold text-brand-blue">${bankroll.toLocaleString()}</span>
+              Current bankroll:{" "}
+              <span className="font-semibold text-brand-blue">
+                ${bankroll.toLocaleString()}
+              </span>
             </span>
           )}
         </p>
@@ -129,22 +144,30 @@ export default function PremiumPicks() {
             <div className="text-center">
               <BarChart3 className="h-8 w-8 mx-auto mb-2 text-brand-purple" />
               <h3 className="font-semibold">Advanced Analytics</h3>
-              <p className="text-sm text-muted-foreground">Detailed trends & insights</p>
+              <p className="text-sm text-muted-foreground">
+                Detailed trends & insights
+              </p>
             </div>
             <div className="text-center">
               <Target className="h-8 w-8 mx-auto mb-2 text-brand-blue" />
               <h3 className="font-semibold">Confidence Ratings</h3>
-              <p className="text-sm text-muted-foreground">AI-powered percentages</p>
+              <p className="text-sm text-muted-foreground">
+                AI-powered percentages
+              </p>
             </div>
             <div className="text-center">
               <DollarSign className="h-8 w-8 mx-auto mb-2 text-brand-cyan" />
               <h3 className="font-semibold">Stake Calculations</h3>
-              <p className="text-sm text-muted-foreground">Bankroll management</p>
+              <p className="text-sm text-muted-foreground">
+                Bankroll management
+              </p>
             </div>
             <div className="text-center">
               <TrendingUp className="h-8 w-8 mx-auto mb-2 text-green-500" />
               <h3 className="font-semibold">Alternative Lines</h3>
-              <p className="text-sm text-muted-foreground">Multiple betting options</p>
+              <p className="text-sm text-muted-foreground">
+                Multiple betting options
+              </p>
             </div>
           </div>
         </CardContent>
@@ -156,7 +179,9 @@ export default function PremiumPicks() {
           <Card
             key={pick.id}
             className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-brand-purple/20"
-            onClick={() => setExpandedPick(expandedPick === pick.id ? null : pick.id)}
+            onClick={() =>
+              setExpandedPick(expandedPick === pick.id ? null : pick.id)
+            }
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
@@ -179,7 +204,9 @@ export default function PremiumPicks() {
                 <div className="text-right space-y-1">
                   <div className="flex items-center space-x-1">
                     <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                    <span className="text-sm font-medium">{pick.confidence}%</span>
+                    <span className="text-sm font-medium">
+                      {pick.confidence}%
+                    </span>
                   </div>
                   <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-xs">
                     Premium
@@ -245,20 +272,34 @@ export default function PremiumPicks() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Last 10 Trend:</span>
-                      <div className="font-medium">{pick.advancedAnalytics.last10Trend}</div>
+                      <span className="text-muted-foreground">
+                        Last 10 Trend:
+                      </span>
+                      <div className="font-medium">
+                        {pick.advancedAnalytics.last10Trend}
+                      </div>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Matchup:</span>
-                      <div className="font-medium">{pick.advancedAnalytics.matchupRank}</div>
+                      <div className="font-medium">
+                        {pick.advancedAnalytics.matchupRank}
+                      </div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Pace/Minutes:</span>
-                      <div className="font-medium">{pick.advancedAnalytics.pace}</div>
+                      <span className="text-muted-foreground">
+                        Pace/Minutes:
+                      </span>
+                      <div className="font-medium">
+                        {pick.advancedAnalytics.pace}
+                      </div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Defense Rank:</span>
-                      <div className="font-medium">{pick.advancedAnalytics.defenseRank}</div>
+                      <span className="text-muted-foreground">
+                        Defense Rank:
+                      </span>
+                      <div className="font-medium">
+                        {pick.advancedAnalytics.defenseRank}
+                      </div>
                     </div>
                   </div>
 
@@ -267,9 +308,16 @@ export default function PremiumPicks() {
                     <h5 className="font-medium mb-2">Alternative Lines</h5>
                     <div className="grid grid-cols-3 gap-2">
                       {pick.alternateLines.map((alt, idx) => (
-                        <div key={idx} className="text-center p-2 bg-muted/30 rounded text-xs">
-                          <div className="font-medium">{pick.side} {alt.line}</div>
-                          <div className="text-muted-foreground">{alt.odds}</div>
+                        <div
+                          key={idx}
+                          className="text-center p-2 bg-muted/30 rounded text-xs"
+                        >
+                          <div className="font-medium">
+                            {pick.side} {alt.line}
+                          </div>
+                          <div className="text-muted-foreground">
+                            {alt.odds}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -284,12 +332,11 @@ export default function PremiumPicks() {
       {/* Action Buttons */}
       <div className="mt-8 text-center space-y-4">
         <p className="text-muted-foreground">
-          This is a preview of premium features. Full functionality requires authentication setup.
+          This is a preview of premium features. Full functionality requires
+          authentication setup.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button variant="outline">
-            Set Bankroll in Settings
-          </Button>
+          <Button variant="outline">Set Bankroll in Settings</Button>
           <Button className="bg-gradient-to-r from-brand-purple to-brand-blue hover:from-brand-purple/90 hover:to-brand-blue/90">
             View More Premium Picks
           </Button>

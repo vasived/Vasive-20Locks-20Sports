@@ -8,7 +8,7 @@ import {
   Settings,
   Shield,
   Menu,
-  X
+  X,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -17,7 +17,7 @@ import {
   SignUpButton,
   UserButton,
   SignOutButton,
-  useClerk
+  useClerk,
 } from "@clerk/clerk-react";
 
 interface LayoutProps {
@@ -26,13 +26,15 @@ interface LayoutProps {
 
 // Helper function to check user roles
 function hasRole(user: any, role: string): boolean {
-  return user?.publicMetadata?.role === role ||
-         user?.publicMetadata?.roles?.includes(role) ||
-         false;
+  return (
+    user?.publicMetadata?.role === role ||
+    user?.publicMetadata?.roles?.includes(role) ||
+    false
+  );
 }
 
 function isPremiumUser(user: any): boolean {
-  return hasRole(user, 'premium') || hasRole(user, 'admin');
+  return hasRole(user, "premium") || hasRole(user, "admin");
 }
 
 export default function Layout({ children }: LayoutProps) {
@@ -42,12 +44,17 @@ export default function Layout({ children }: LayoutProps) {
   const { signOut } = useClerk();
 
   // Derive user status from Clerk
-  const isAdmin = isSignedIn && hasRole(user, 'admin');
+  const isAdmin = isSignedIn && hasRole(user, "admin");
   const isPremium = isSignedIn && isPremiumUser(user);
 
   const navigation = [
     { name: "Free Picks", href: "/free-picks", icon: TrendingUp, public: true },
-    { name: "Premium Picks", href: "/premium-picks", icon: Lock, premium: true },
+    {
+      name: "Premium Picks",
+      href: "/premium-picks",
+      icon: Lock,
+      premium: true,
+    },
     { name: "Schedule", href: "/schedule", icon: Calendar, public: true },
     { name: "Settings", href: "/settings", icon: Settings, auth: true },
     { name: "Admin", href: "/admin", icon: Shield, admin: true },
@@ -116,7 +123,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="flex items-center space-x-3">
                 {isPremium && (
                   <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
-                    {isAdmin ? 'Admin' : 'Premium'}
+                    {isAdmin ? "Admin" : "Premium"}
                   </Badge>
                 )}
                 <UserButton
@@ -124,8 +131,9 @@ export default function Layout({ children }: LayoutProps) {
                     elements: {
                       avatarBox: "h-8 w-8",
                       userButtonPopoverCard: "bg-card border border-border",
-                      userButtonPopoverActionButton: "text-foreground hover:bg-accent"
-                    }
+                      userButtonPopoverActionButton:
+                        "text-foreground hover:bg-accent",
+                    },
                   }}
                 />
               </div>
@@ -190,7 +198,7 @@ export default function Layout({ children }: LayoutProps) {
                   </Link>
                 );
               })}
-              
+
               {/* Mobile Auth Buttons */}
               <div className="pt-2 border-t border-border">
                 {isSignedIn ? (
@@ -198,7 +206,7 @@ export default function Layout({ children }: LayoutProps) {
                     {isPremium && (
                       <div className="px-3 py-2">
                         <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
-                          {isAdmin ? 'Admin' : 'Premium'} Member
+                          {isAdmin ? "Admin" : "Premium"} Member
                         </Badge>
                       </div>
                     )}
@@ -240,9 +248,7 @@ export default function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
 
       {/* Footer */}
       <footer className="border-t border-border bg-muted/20">
@@ -254,7 +260,10 @@ export default function Layout({ children }: LayoutProps) {
                 <Link to="/free-picks" className="block hover:text-foreground">
                   Free Picks
                 </Link>
-                <Link to="/premium-picks" className="block hover:text-foreground">
+                <Link
+                  to="/premium-picks"
+                  className="block hover:text-foreground"
+                >
                   Premium Picks
                 </Link>
                 <Link to="/schedule" className="block hover:text-foreground">
