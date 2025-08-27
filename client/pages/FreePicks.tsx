@@ -254,7 +254,7 @@ export default function FreePicks() {
           filteredAndSortedPicks.map((pick, index) => (
             <Card
               key={pick.id}
-              className="group hover:shadow-lg transition-all duration-200 animate-slide-up cursor-pointer"
+              className="group hover:shadow-xl transition-all duration-300 hover:scale-[1.01] animate-slide-up cursor-pointer backdrop-blur-sm border-border/50"
               style={{ animationDelay: `${index * 50}ms` }}
               onClick={() =>
                 setExpandedPick(expandedPick === pick.id ? null : pick.id)
