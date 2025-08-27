@@ -20,57 +20,40 @@ interface Stats {
   activePicks: number;
 }
 
-const mockSports = [
-  { code: "nba", name: "NBA", active: true, games: 6 },
-  { code: "mlb", name: "MLB", active: true, games: 4 },
-  { code: "nfl", name: "NFL", active: false, games: 0 },
-  { code: "nhl", name: "NHL", active: true, games: 2 },
-];
-
-const mockFreePicks = [
-  {
-    id: "1",
-    player: "Stephen Curry",
-    propType: "Points",
-    line: 27.5,
-    side: "Over",
-    game: "GSW @ LAL",
-    tipoff: "10:30 PM EST",
-    analysis:
-      "Curry has hit the over in 7 of his last 10 games against the Lakers. He's averaging 31.2 points in this matchup this season.",
-    confidence: 75,
-  },
-  {
-    id: "2",
-    player: "Giannis Antetokounmpo",
-    propType: "Rebounds",
-    line: 11.5,
-    side: "Over",
-    game: "MIL @ BOS",
-    tipoff: "8:00 PM EST",
-    analysis:
-      "Giannis has been dominant on the boards lately, recording 12+ rebounds in 6 straight games. Boston allows the 8th most rebounds to PFs.",
-    confidence: 82,
-  },
-  {
-    id: "3",
-    player: "Ronald Acuña Jr.",
-    propType: "Hits",
-    line: 1.5,
-    side: "Over",
-    game: "ATL vs NYM",
-    tipoff: "7:15 PM EST",
-    analysis:
-      "Acuña is hitting .347 over his last 15 games and has excellent numbers against tonight's starting pitcher historically.",
-    confidence: 68,
-  },
-];
-
 export default function Index() {
   const [selectedSport, setSelectedSport] = useState("nba");
   const [timeUntilTonightGames, setTimeUntilTonightGames] = useState("");
+  const [freePicks, setFreePicks] = useState<Pick[]>([]);
+  const [stats, setStats] = useState<Stats>({ todayGames: 0, activePicks: 0 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // Fetch free picks
+        const picksResponse = await fetch('/api/picks/free');
+        if (picksResponse.ok) {
+          const picksData = await picksResponse.json();
+          setFreePicks(picksData.picks || []);
+        }
+
+        // Set mock stats for now (can be enhanced later)
+        setStats({
+          todayGames: 12,
+          activePicks: freePicks.length || 8,
+        });
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
     // Mock countdown to first game tonight
     const updateCountdown = () => {
       const now = new Date();
