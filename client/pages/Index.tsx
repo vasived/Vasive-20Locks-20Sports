@@ -123,9 +123,8 @@ export default function Index() {
                 </h1>
 
                 <p className="text-xl text-muted-foreground max-w-md">
-                  Join {mockStats.subscribers.toLocaleString()} subscribers
-                  getting winning picks with {mockStats.winRate}% accuracy from
-                  our expert analysts.
+                  Get expert sports betting picks with advanced analytics and
+                  confidence ratings from our professional analysts.
                 </p>
               </div>
 
@@ -153,7 +152,7 @@ export default function Index() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border">
+              <div className="grid grid-cols-2 gap-6 pt-8 border-t border-border">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-blue">
                     {mockStats.todayGames}
@@ -161,12 +160,6 @@ export default function Index() {
                   <div className="text-sm text-muted-foreground">
                     Games Today
                   </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-brand-purple">
-                    {mockStats.winRate}%
-                  </div>
-                  <div className="text-sm text-muted-foreground">Win Rate</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-cyan">
