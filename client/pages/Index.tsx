@@ -113,9 +113,9 @@ export default function Index() {
             </div>
 
             {/* Hero Visual - How It Works Preview */}
-            <div className="relative animate-slide-up">
-              <div className="relative bg-gradient-to-br from-card to-muted/10 rounded-2xl p-8 border border-border/50 backdrop-blur-sm">
-                <div className="absolute -inset-1 bg-gradient-to-br from-brand-blue/20 to-brand-purple/20 rounded-2xl blur opacity-60" />
+            <div className="relative animate-slide-up" style={{ animationDelay: "200ms" }}>
+              <div className="relative bg-gradient-to-br from-card to-muted/10 rounded-2xl p-8 border border-border/50 backdrop-blur-enhanced hover:scale-[1.01] transition-all duration-500">
+                <div className="absolute -inset-1 bg-gradient-to-br from-brand-blue/30 to-brand-purple/30 rounded-2xl blur opacity-60 group-hover:opacity-80 transition-opacity" />
                 <div className="relative space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold">How It Works</h3>
