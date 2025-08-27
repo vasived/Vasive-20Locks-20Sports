@@ -48,8 +48,10 @@ export default function Settings() {
   const isAdmin = isSignedIn && hasRole(user, "admin");
 
   useEffect(() => {
-    if (user?.privateMetadata?.bankroll) {
-      const currentBankroll = user.privateMetadata.bankroll.toString();
+    // Check both privateMetadata and unsafeMetadata for bankroll
+    const bankrollValue = user?.privateMetadata?.bankroll || user?.unsafeMetadata?.bankroll;
+    if (bankrollValue) {
+      const currentBankroll = bankrollValue.toString();
       setBankroll(currentBankroll);
       setOriginalBankroll(currentBankroll);
     }
