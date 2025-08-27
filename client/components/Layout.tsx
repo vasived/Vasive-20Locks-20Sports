@@ -9,6 +9,7 @@ import {
   Shield,
   Menu,
   X,
+  Home,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -48,7 +49,7 @@ export default function Layout({ children }: LayoutProps) {
   const isPremium = isSignedIn && isPremiumUser(user);
 
   const navigation = [
-    { name: "Home", href: "/", icon: TrendingUp, public: true },
+    { name: "Home", href: "/", icon: Home, public: true },
     { name: "Free Picks", href: "/free-picks", icon: TrendingUp, public: true },
     {
       name: "Premium Picks",
