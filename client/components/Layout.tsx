@@ -9,6 +9,7 @@ import {
   Shield,
   Menu,
   X,
+  Home,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -48,22 +49,33 @@ export default function Layout({ children }: LayoutProps) {
   const isPremium = isSignedIn && isPremiumUser(user);
 
   const navigation = [
-    { name: "Free Picks", href: "/free-picks", icon: TrendingUp, public: true },
+    { name: "Home", href: "/", icon: Home, alwaysVisible: true },
+    {
+      name: "Free Picks",
+      href: "/free-picks",
+      icon: TrendingUp,
+      alwaysVisible: true,
+    },
     {
       name: "Premium Picks",
       href: "/premium-picks",
       icon: Lock,
-      premium: true,
+      alwaysVisible: true,
+      isPremiumTab: true,
     },
-    { name: "Schedule", href: "/schedule", icon: Calendar, public: true },
-    { name: "Settings", href: "/settings", icon: Settings, auth: true },
+    {
+      name: "Settings",
+      href: "/settings",
+      icon: Settings,
+      alwaysVisible: true,
+    },
     { name: "Admin", href: "/admin", icon: Shield, admin: true },
   ];
 
   const filteredNavigation = navigation.filter((item) => {
-    if (item.public) return true;
-    if (item.auth && isSignedIn) return true;
-    if (item.premium && isSignedIn && isPremium) return true;
+    // Show main navigation tabs to everyone
+    if (item.alwaysVisible) return true;
+    // Only show admin tab to actual admins
     if (item.admin && isSignedIn && isAdmin) return true;
     return false;
   });
@@ -107,7 +119,7 @@ export default function Layout({ children }: LayoutProps) {
                 >
                   <item.icon className="h-4 w-4" />
                   <span>{item.name}</span>
-                  {item.premium && isPremium && (
+                  {item.isPremiumTab && isPremium && (
                     <Badge variant="secondary" className="text-xs">
                       Premium
                     </Badge>
@@ -190,7 +202,7 @@ export default function Layout({ children }: LayoutProps) {
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.name}</span>
-                    {item.premium && isPremium && (
+                    {item.isPremiumTab && isPremium && (
                       <Badge variant="secondary" className="text-xs">
                         Premium
                       </Badge>
@@ -265,9 +277,6 @@ export default function Layout({ children }: LayoutProps) {
                   className="block hover:text-foreground"
                 >
                   Premium Picks
-                </Link>
-                <Link to="/schedule" className="block hover:text-foreground">
-                  Schedule
                 </Link>
               </div>
             </div>

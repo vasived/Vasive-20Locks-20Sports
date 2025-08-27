@@ -13,90 +13,162 @@ import {
   Star,
   Zap,
 } from "lucide-react";
+import { Pick, PremiumPick } from "@shared/api";
 
-// Mock data - replace with actual API calls
-const mockStats = {
-  todayGames: 12,
-  activePicks: 8,
-  winRate: 73,
-  subscribers: 2547,
-};
+interface Stats {
+  todayGames: number;
+  activePremiumPicks: number;
+}
 
-const mockSports = [
-  { code: "nba", name: "NBA", active: true, games: 6 },
-  { code: "mlb", name: "MLB", active: true, games: 4 },
-  { code: "nfl", name: "NFL", active: false, games: 0 },
-  { code: "nhl", name: "NHL", active: true, games: 2 },
-];
-
-const mockFreePicks = [
-  {
-    id: "1",
-    player: "Stephen Curry",
-    propType: "Points",
-    line: 27.5,
-    side: "Over",
-    game: "GSW @ LAL",
-    tipoff: "10:30 PM EST",
-    analysis:
-      "Curry has hit the over in 7 of his last 10 games against the Lakers. He's averaging 31.2 points in this matchup this season.",
-    confidence: 75,
-  },
-  {
-    id: "2",
-    player: "Giannis Antetokounmpo",
-    propType: "Rebounds",
-    line: 11.5,
-    side: "Over",
-    game: "MIL @ BOS",
-    tipoff: "8:00 PM EST",
-    analysis:
-      "Giannis has been dominant on the boards lately, recording 12+ rebounds in 6 straight games. Boston allows the 8th most rebounds to PFs.",
-    confidence: 82,
-  },
-  {
-    id: "3",
-    player: "Ronald Acuña Jr.",
-    propType: "Hits",
-    line: 1.5,
-    side: "Over",
-    game: "ATL vs NYM",
-    tipoff: "7:15 PM EST",
-    analysis:
-      "Acuña is hitting .347 over his last 15 games and has excellent numbers against tonight's starting pitcher historically.",
-    confidence: 68,
-  },
-];
+interface GameData {
+  sport: string;
+  count: number;
+  nextGameTime?: string;
+}
 
 export default function Index() {
   const [selectedSport, setSelectedSport] = useState("nba");
   const [timeUntilTonightGames, setTimeUntilTonightGames] = useState("");
+  const [freePicks, setFreePicks] = useState<Pick[]>([]);
+  const [stats, setStats] = useState<Stats>({
+    todayGames: 0,
+    activePremiumPicks: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [gamesData, setGamesData] = useState<GameData[]>([]);
 
   useEffect(() => {
-    // Mock countdown to first game tonight
-    const updateCountdown = () => {
-      const now = new Date();
-      const tonight = new Date();
-      tonight.setHours(19, 0, 0, 0); // 7 PM EST
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-      if (now > tonight) {
-        tonight.setDate(tonight.getDate() + 1);
+        // Fetch both free and premium picks
+        const [freeResponse, premiumResponse] = await Promise.all([
+          fetch("/api/picks/free"),
+          fetch("/api/picks/premium"),
+        ]);
+
+        let freePicks: Pick[] = [];
+        let premiumPicks: PremiumPick[] = [];
+
+        if (freeResponse.ok) {
+          const freeData = await freeResponse.json();
+          freePicks = freeData.picks || [];
+          setFreePicks(freePicks);
+        }
+
+        if (premiumResponse.ok) {
+          const premiumData = await premiumResponse.json();
+          premiumPicks = premiumData.picks || [];
+        }
+
+        // Create mock games data based on current time
+        const today = new Date();
+        const mockGamesData: GameData[] = [
+          {
+            sport: "NBA",
+            count: 6,
+            nextGameTime: new Date(
+              today.getTime() + 2 * 60 * 60 * 1000,
+            ).toISOString(),
+          },
+          {
+            sport: "MLB",
+            count: 4,
+            nextGameTime: new Date(
+              today.getTime() + 3 * 60 * 60 * 1000,
+            ).toISOString(),
+          },
+          {
+            sport: "NHL",
+            count: 2,
+            nextGameTime: new Date(
+              today.getTime() + 4 * 60 * 60 * 1000,
+            ).toISOString(),
+          },
+        ];
+
+        setGamesData(mockGamesData);
+
+        // Calculate real stats
+        const totalGames = mockGamesData.reduce(
+          (sum, game) => sum + game.count,
+          0,
+        );
+        setStats({
+          todayGames: totalGames,
+          activePremiumPicks: premiumPicks.length,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Set fallback stats
+        setStats({
+          todayGames: 0,
+          activePremiumPicks: 0,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    // Real countdown to next game
+    const updateCountdown = () => {
+      if (gamesData.length === 0) {
+        setTimeUntilTonightGames("TBD");
+        return;
       }
 
-      const diff = tonight.getTime() - now.getTime();
+      const now = new Date();
+      let nextGameTime: Date | null = null;
+
+      // Find the earliest upcoming game
+      for (const game of gamesData) {
+        if (game.nextGameTime) {
+          const gameTime = new Date(game.nextGameTime);
+          if (gameTime > now && (!nextGameTime || gameTime < nextGameTime)) {
+            nextGameTime = gameTime;
+          }
+        }
+      }
+
+      if (!nextGameTime) {
+        // If no upcoming games today, set to 7 PM tomorrow
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(19, 0, 0, 0);
+        nextGameTime = tomorrow;
+      }
+
+      const diff = nextGameTime.getTime() - now.getTime();
+      if (diff <= 0) {
+        setTimeUntilTonightGames("Live");
+        return;
+      }
+
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-      setTimeUntilTonightGames(`${hours}h ${minutes}m`);
+      if (hours > 24) {
+        const days = Math.floor(hours / 24);
+        setTimeUntilTonightGames(`${days}d ${hours % 24}h`);
+      } else {
+        setTimeUntilTonightGames(`${hours}h ${minutes}m`);
+      }
     };
 
     updateCountdown();
     const interval = setInterval(updateCountdown, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [gamesData.length]);
 
-  const activeSports = mockSports.filter((sport) => sport.active);
+  const activeSports = [
+    { code: "nba", name: "NBA", active: true },
+    { code: "mlb", name: "MLB", active: true },
+    { code: "nhl", name: "NHL", active: true },
+  ];
 
   return (
     <div className="min-h-screen">
@@ -112,7 +184,7 @@ export default function Index() {
               <div className="space-y-4">
                 <Badge className="bg-gradient-to-r from-brand-blue to-brand-purple text-white">
                   <Zap className="w-3 h-3 mr-1" />
-                  {mockStats.activePicks} Active Picks Today
+                  {stats.activePremiumPicks} Active PREMIUM Picks Today
                 </Badge>
 
                 <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
@@ -123,9 +195,8 @@ export default function Index() {
                 </h1>
 
                 <p className="text-xl text-muted-foreground max-w-md">
-                  Join {mockStats.subscribers.toLocaleString()} subscribers
-                  getting winning picks with {mockStats.winRate}% accuracy from
-                  our expert analysts.
+                  Get expert sports betting picks with advanced analytics and
+                  confidence ratings from our professional analysts.
                 </p>
               </div>
 
@@ -153,20 +224,14 @@ export default function Index() {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border">
+              <div className="grid grid-cols-2 gap-6 pt-8 border-t border-border">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-blue">
-                    {mockStats.todayGames}
+                    {stats.todayGames}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     Games Today
                   </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-brand-purple">
-                    {mockStats.winRate}%
-                  </div>
-                  <div className="text-sm text-muted-foreground">Win Rate</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-cyan">
@@ -193,20 +258,40 @@ export default function Index() {
                   </div>
 
                   <div className="space-y-4">
-                    {activeSports.map((sport) => (
-                      <div
-                        key={sport.code}
-                        className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
-                            {sport.name.slice(0, 2)}
+                    {gamesData.length > 0
+                      ? gamesData.map((sport) => (
+                          <div
+                            key={sport.sport.toLowerCase()}
+                            className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
+                                {sport.sport.slice(0, 2)}
+                              </div>
+                              <span className="font-medium">{sport.sport}</span>
+                            </div>
+                            <Badge variant="outline">{sport.count} games</Badge>
                           </div>
-                          <span className="font-medium">{sport.name}</span>
-                        </div>
-                        <Badge variant="outline">{sport.games} games</Badge>
-                      </div>
-                    ))}
+                        ))
+                      : // Loading or fallback
+                        [
+                          { sport: "NBA", count: 0 },
+                          { sport: "MLB", count: 0 },
+                          { sport: "NHL", count: 0 },
+                        ].map((sport) => (
+                          <div
+                            key={sport.sport.toLowerCase()}
+                            className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-blue to-brand-purple flex items-center justify-center text-white text-sm font-semibold">
+                                {sport.sport.slice(0, 2)}
+                              </div>
+                              <span className="font-medium">{sport.sport}</span>
+                            </div>
+                            <Badge variant="outline">{sport.count} games</Badge>
+                          </div>
+                        ))}
                   </div>
                 </div>
               </div>
@@ -240,61 +325,83 @@ export default function Index() {
 
         {/* Free Picks Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {mockFreePicks.map((pick, index) => (
-            <Card
-              key={pick.id}
-              className="group hover:shadow-lg transition-all duration-200 animate-slide-up"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{pick.player}</CardTitle>
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                    <span className="text-sm font-medium">
-                      {pick.confidence}%
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>{pick.game}</span>
-                  <span>•</span>
-                  <span>{pick.tipoff}</span>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-center p-4 bg-muted/30 rounded-lg">
-                  <div className="text-center">
-                    <div className="text-lg font-semibold">
-                      {pick.propType} {pick.side} {pick.line}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {pick.side} {pick.line} {pick.propType}
+          {loading ? (
+            // Loading skeleton
+            Array.from({ length: 3 }).map((_, index) => (
+              <Card key={index} className="animate-pulse">
+                <CardHeader className="pb-3">
+                  <div className="h-6 bg-muted rounded w-3/4"></div>
+                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="h-16 bg-muted rounded"></div>
+                  <div className="h-12 bg-muted rounded"></div>
+                </CardContent>
+              </Card>
+            ))
+          ) : freePicks.length > 0 ? (
+            freePicks.slice(0, 3).map((pick, index) => (
+              <Card
+                key={pick.id}
+                className="group hover:shadow-lg transition-all duration-200 animate-slide-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">{pick.player}</CardTitle>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                      <span className="text-sm font-medium">
+                        {pick.confidence}%
+                      </span>
                     </div>
                   </div>
-                </div>
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>{pick.game}</span>
+                    <span>•</span>
+                    <span>{pick.tipoff}</span>
+                  </div>
+                </CardHeader>
 
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {pick.analysis}
-                </p>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-center p-4 bg-muted/30 rounded-lg">
+                    <div className="text-center">
+                      <div className="text-lg font-semibold">
+                        {pick.propType} {pick.side} {pick.line}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {pick.side} {pick.line} {pick.propType}
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-border">
-                  <Badge variant="outline" className="text-xs">
-                    Free Pick
-                  </Badge>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-brand-blue hover:text-brand-blue/80"
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {pick.analysis}
+                  </p>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-border">
+                    <Badge variant="outline" className="text-xs">
+                      Free Pick
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-brand-blue hover:text-brand-blue/80"
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-12">
+              <p className="text-muted-foreground">
+                No free picks available today.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* View All Free Picks */}
