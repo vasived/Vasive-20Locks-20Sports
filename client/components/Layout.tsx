@@ -55,9 +55,9 @@ export default function Layout({ children }: LayoutProps) {
 
   const filteredNavigation = navigation.filter((item) => {
     if (item.public) return true;
-    if (item.auth && mockUser.isSignedIn) return true;
-    if (item.premium && mockUser.isSignedIn && mockUser.isPremium) return true;
-    if (item.admin && mockUser.isSignedIn && mockUser.isAdmin) return true;
+    if (item.auth && isSignedIn) return true;
+    if (item.premium && isSignedIn && isPremium) return true;
+    if (item.admin && isSignedIn && isAdmin) return true;
     return false;
   });
 
