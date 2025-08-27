@@ -361,7 +361,7 @@ export default function PremiumPicks() {
                       {pick.propType} {pick.side} {pick.line}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {pick.odds || "-110"} ��� {pick.sportsbook || "Various"}
+                      {pick.odds || "-110"} • {pick.sportsbook || "Various"}
                     </div>
                   </div>
                 </div>
