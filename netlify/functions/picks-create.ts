@@ -7,20 +7,20 @@ const pool = new Pool({
 
 export const handler = async (event: any, context: any) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   };
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers, body: "" };
   }
 
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
 
@@ -75,9 +75,9 @@ export const handler = async (event: any, context: any) => {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify({ 
-          id: result.rows[0].id, 
-          message: "Pick created successfully" 
+        body: JSON.stringify({
+          id: result.rows[0].id,
+          message: "Pick created successfully",
         }),
       };
     } finally {

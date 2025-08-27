@@ -7,20 +7,20 @@ const pool = new Pool({
 
 export const handler = async (event: any, context: any) => {
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   };
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers, body: "" };
   }
 
-  if (event.httpMethod !== 'GET') {
+  if (event.httpMethod !== "GET") {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
 
@@ -56,8 +56,13 @@ export const handler = async (event: any, context: any) => {
         propType: row.prop_type,
         line: parseFloat(row.prop_line),
         side: row.side,
-        game: row.home_team && row.away_team ? `${row.away_team} @ ${row.home_team}` : "TBD",
-        tipoff: row.tipoff_est ? new Date(row.tipoff_est).toLocaleString() : "TBD",
+        game:
+          row.home_team && row.away_team
+            ? `${row.away_team} @ ${row.home_team}`
+            : "TBD",
+        tipoff: row.tipoff_est
+          ? new Date(row.tipoff_est).toLocaleString()
+          : "TBD",
         analysis: row.analysis_short,
         confidence: row.confidence_pct || 0,
         odds: row.odds,
