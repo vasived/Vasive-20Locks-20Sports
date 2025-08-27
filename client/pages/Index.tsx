@@ -346,7 +346,7 @@ export default function Index() {
 
             {/* Premium Features */}
             <div className="space-y-6">
-              <Card className="border-brand-purple/20 bg-gradient-to-br from-brand-purple/5 to-brand-blue/5">
+              <Card className="border-brand-purple/20 bg-gradient-to-br from-brand-purple/5 to-brand-blue/5 hover:border-brand-purple/40 transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BarChart3 className="h-5 w-5 text-brand-purple" />
@@ -361,7 +361,7 @@ export default function Index() {
                 </CardContent>
               </Card>
 
-              <Card className="border-brand-blue/20 bg-gradient-to-br from-brand-blue/5 to-brand-cyan/5">
+              <Card className="border-brand-blue/20 bg-gradient-to-br from-brand-blue/5 to-brand-cyan/5 hover:border-brand-blue/40 transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5 text-brand-blue" />
@@ -376,7 +376,7 @@ export default function Index() {
                 </CardContent>
               </Card>
 
-              <Card className="border-green-500/20 bg-gradient-to-br from-green-500/5 to-green-600/5">
+              <Card className="border-green-500/20 bg-gradient-to-br from-green-500/5 to-green-600/5 hover:border-green-500/40 transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <DollarSign className="h-5 w-5 text-green-500" />
