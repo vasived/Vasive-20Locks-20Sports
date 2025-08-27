@@ -135,7 +135,7 @@ export default function Layout({ children }: LayoutProps) {
             {isSignedIn ? (
               <div className="flex items-center space-x-3">
                 {isPremium && (
-                  <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
+                  <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-white border-0">
                     {isAdmin ? "Admin" : "Premium"}
                   </Badge>
                 )}
@@ -218,7 +218,7 @@ export default function Layout({ children }: LayoutProps) {
                   <div className="space-y-2">
                     {isPremium && (
                       <div className="px-3 py-2">
-                        <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
+                        <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-white border-0">
                           {isAdmin ? "Admin" : "Premium"} Member
                         </Badge>
                       </div>
