@@ -19,69 +19,20 @@ import {
 } from "lucide-react";
 import { PremiumPick } from "@shared/api";
 
-// Mock premium picks data
-const mockPremiumPicks = [
-  {
-    id: "premium-1",
-    player: "Luka Dončić",
-    propType: "Points + Assists",
-    line: 45.5,
-    side: "Over",
-    game: "Dallas Mavericks @ Phoenix Suns",
-    gameShort: "DAL @ PHX",
-    tipoff: "2024-01-15T22:00:00-05:00",
-    sport: "NBA",
-    confidence: 89,
-    stakePercentage: 3.5,
-    analysis:
-      "Luka has been exceptional in his last 10 games, averaging 32.8 points and 9.2 assists. Phoenix allows the 5th most points to PGs this season.",
-    advancedAnalytics: {
-      last10Trend: "+12.3 vs line average",
-      matchupRank: "Top 3 opponent for PG scoring",
-      pace: "102.4 (Above average)",
-      minutes: "36.2 projected",
-      defenseRank: "22nd vs Guards",
-    },
-    alternateLines: [
-      { line: 44.5, odds: "+105" },
-      { line: 46.5, odds: "-125" },
-      { line: 47.5, odds: "-145" },
-    ],
-    odds: "-110",
-    sportsbook: "DraftKings",
-    result: "Pending",
-  },
-  {
-    id: "premium-2",
-    player: "Shohei Ohtani",
-    propType: "Strikeouts",
-    line: 8.5,
-    side: "Over",
-    game: "Los Angeles Angels @ Seattle Mariners",
-    gameShort: "LAA @ SEA",
-    tipoff: "2024-01-15T22:10:00-05:00",
-    sport: "MLB",
-    confidence: 76,
-    stakePercentage: 2.0,
-    analysis:
-      "Ohtani has recorded 9+ strikeouts in 7 of his last 10 starts. Seattle ranks 28th in contact rate vs righties.",
-    advancedAnalytics: {
-      last10Trend: "+1.8 strikeouts vs average",
-      matchupRank: "Favorable - SEA strikes out 24.8% vs RHP",
-      pace: "N/A",
-      minutes: "~95 pitches projected",
-      defenseRank: "Bottom 5 contact rate",
-    },
-    alternateLines: [
-      { line: 7.5, odds: "-165" },
-      { line: 9.5, odds: "+140" },
-      { line: 10.5, odds: "+220" },
-    ],
-    odds: "-115",
-    sportsbook: "FanDuel",
-    result: "Win",
-  },
-];
+// Helper function to format game time
+function formatGameTime(tipoffTime: string) {
+  if (!tipoffTime || tipoffTime === 'TBD') return 'TBD';
+  try {
+    const date = new Date(tipoffTime);
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "America/New_York",
+    }) + " EST";
+  } catch {
+    return tipoffTime;
+  }
+}
 
 // Helper function to check user roles
 function hasRole(user: any, role: string): boolean {
