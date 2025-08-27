@@ -70,42 +70,61 @@ export default function Settings() {
     setSaving(true);
     setSaveMessage(null);
 
+    const attemptUpdate = async (retryCount = 0): Promise<void> => {
+      try {
+        // Reload user object to ensure fresh state
+        await user.reload();
+
+        // Wait a bit longer to ensure the reload completes
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // Use a completely fresh object without spreading existing metadata
+        const updateData = {
+          privateMetadata: {
+            bankroll: bankrollValue,
+          },
+        };
+
+        await user.update(updateData);
+
+        setOriginalBankroll(bankroll);
+        setSaveMessage({
+          type: "success",
+          message: "Bankroll updated successfully!",
+        });
+
+        // Clear success message after 3 seconds
+        setTimeout(() => setSaveMessage(null), 3000);
+
+      } catch (error) {
+        console.error(`Error updating bankroll (attempt ${retryCount + 1}):`, error);
+
+        // Check if it's a stream error and we can retry
+        const isStreamError = error instanceof Error &&
+          (error.message.includes("stream") || error.message.includes("body"));
+
+        if (isStreamError && retryCount < 2) {
+          // Wait longer and retry
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return attemptUpdate(retryCount + 1);
+        }
+
+        // If all retries failed or it's a different error
+        const errorMessage = isStreamError
+          ? "Unable to save due to a connection issue. Please refresh the page and try again."
+          : error instanceof Error
+            ? error.message
+            : "Failed to update bankroll. Please try again.";
+
+        setSaveMessage({
+          type: "error",
+          message: errorMessage,
+        });
+      }
+    };
+
     try {
-      // Add a small delay to prevent rapid-fire requests
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Create a fresh metadata object to avoid reference issues
-      const newPrivateMetadata = {
-        bankroll: bankrollValue,
-        ...(user.privateMetadata || {}),
-      };
-
-      await user.update({
-        privateMetadata: newPrivateMetadata,
-      });
-
-      setOriginalBankroll(bankroll);
-      setSaveMessage({
-        type: "success",
-        message: "Bankroll updated successfully!",
-      });
-
-      // Clear success message after 3 seconds
-      setTimeout(() => setSaveMessage(null), 3000);
-    } catch (error) {
-      console.error("Error updating bankroll:", error);
-
-      // More specific error handling
-      const errorMessage = error instanceof Error
-        ? error.message.includes("stream")
-          ? "Update in progress. Please wait and try again."
-          : "Failed to update bankroll. Please try again."
-        : "Failed to update bankroll. Please try again.";
-
-      setSaveMessage({
-        type: "error",
-        message: errorMessage,
-      });
+      await attemptUpdate();
     } finally {
       setSaving(false);
     }
