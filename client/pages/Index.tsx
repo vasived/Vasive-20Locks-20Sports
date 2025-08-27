@@ -77,7 +77,11 @@ export default function Index() {
     return () => clearInterval(interval);
   }, []);
 
-  const activeSports = mockSports.filter((sport) => sport.active);
+  const activeSports = [
+    { code: "nba", name: "NBA", active: true },
+    { code: "mlb", name: "MLB", active: true },
+    { code: "nhl", name: "NHL", active: true },
+  ];
 
   return (
     <div className="min-h-screen">
@@ -218,61 +222,81 @@ export default function Index() {
 
         {/* Free Picks Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {mockFreePicks.map((pick, index) => (
-            <Card
-              key={pick.id}
-              className="group hover:shadow-lg transition-all duration-200 animate-slide-up"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{pick.player}</CardTitle>
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                    <span className="text-sm font-medium">
-                      {pick.confidence}%
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>{pick.game}</span>
-                  <span>•</span>
-                  <span>{pick.tipoff}</span>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-center p-4 bg-muted/30 rounded-lg">
-                  <div className="text-center">
-                    <div className="text-lg font-semibold">
-                      {pick.propType} {pick.side} {pick.line}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {pick.side} {pick.line} {pick.propType}
+          {loading ? (
+            // Loading skeleton
+            Array.from({ length: 3 }).map((_, index) => (
+              <Card key={index} className="animate-pulse">
+                <CardHeader className="pb-3">
+                  <div className="h-6 bg-muted rounded w-3/4"></div>
+                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="h-16 bg-muted rounded"></div>
+                  <div className="h-12 bg-muted rounded"></div>
+                </CardContent>
+              </Card>
+            ))
+          ) : freePicks.length > 0 ? (
+            freePicks.slice(0, 3).map((pick, index) => (
+              <Card
+                key={pick.id}
+                className="group hover:shadow-lg transition-all duration-200 animate-slide-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">{pick.player}</CardTitle>
+                    <div className="flex items-center space-x-1">
+                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                      <span className="text-sm font-medium">
+                        {pick.confidence}%
+                      </span>
                     </div>
                   </div>
-                </div>
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>{pick.game}</span>
+                    <span>•</span>
+                    <span>{pick.tipoff}</span>
+                  </div>
+                </CardHeader>
 
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {pick.analysis}
-                </p>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-center p-4 bg-muted/30 rounded-lg">
+                    <div className="text-center">
+                      <div className="text-lg font-semibold">
+                        {pick.propType} {pick.side} {pick.line}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {pick.side} {pick.line} {pick.propType}
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-border">
-                  <Badge variant="outline" className="text-xs">
-                    Free Pick
-                  </Badge>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-brand-blue hover:text-brand-blue/80"
-                  >
-                    View Details
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {pick.analysis}
+                  </p>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-border">
+                    <Badge variant="outline" className="text-xs">
+                      Free Pick
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-brand-blue hover:text-brand-blue/80"
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-12">
+              <p className="text-muted-foreground">No free picks available today.</p>
+            </div>
+          )}
         </div>
 
         {/* View All Free Picks */}
