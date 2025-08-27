@@ -280,7 +280,16 @@ export default function Settings() {
                             placeholder="0.00"
                             value={bankroll}
                             onChange={(e) => setBankroll(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                if (!saving && hasChanges) {
+                                  handleSaveBankroll();
+                                }
+                              }
+                            }}
                             className="pl-8"
+                            disabled={saving}
                           />
                         </div>
                         <Button
