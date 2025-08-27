@@ -76,7 +76,7 @@ export default function Admin() {
 
   // Form state for create/edit
   const [formData, setFormData] = useState<Partial<CreatePickRequest>>({
-    sportCode: "nba",
+    sportCode: "NBA",
     tier: "free",
     player: "",
     propType: "",
@@ -207,7 +207,7 @@ export default function Admin() {
 
   const resetForm = () => {
     setFormData({
-      sportCode: "nba",
+      sportCode: "NBA",
       tier: "free",
       player: "",
       propType: "",
@@ -328,10 +328,10 @@ export default function Admin() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="nba">NBA</SelectItem>
-                        <SelectItem value="mlb">MLB</SelectItem>
-                        <SelectItem value="nfl">NFL</SelectItem>
-                        <SelectItem value="nhl">NHL</SelectItem>
+                        <SelectItem value="NBA">NBA</SelectItem>
+                        <SelectItem value="MLB">MLB</SelectItem>
+                        <SelectItem value="NFL">NFL</SelectItem>
+                        <SelectItem value="NHL">NHL</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
