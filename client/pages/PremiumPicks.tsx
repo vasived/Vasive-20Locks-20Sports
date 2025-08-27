@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useUserRoles, useStakeCalculation } from "@/hooks/useUserRoles";
+import { useUser } from "@clerk/clerk-react";
 import {
   TrendingUp,
   Star,
@@ -12,7 +12,12 @@ import {
   Clock,
   DollarSign,
   Crown,
+  Lock,
+  Users,
+  ExternalLink,
+  Zap,
 } from "lucide-react";
+import { PremiumPick } from "@shared/api";
 
 // Mock premium picks data
 const mockPremiumPicks = [
@@ -78,10 +83,27 @@ const mockPremiumPicks = [
   },
 ];
 
+// Helper function to check user roles
+function hasRole(user: any, role: string): boolean {
+  return (
+    user?.publicMetadata?.role === role ||
+    user?.publicMetadata?.roles?.includes(role) ||
+    false
+  );
+}
+
+function isPremiumUser(user: any): boolean {
+  return hasRole(user, "premium") || hasRole(user, "admin");
+}
+
 export default function PremiumPicks() {
-  const { isPremium, bankroll } = useUserRoles();
-  const { formatStake } = useStakeCalculation();
+  const { isSignedIn, user } = useUser();
   const [expandedPick, setExpandedPick] = useState<string | null>(null);
+  const [premiumPicks, setPremiumPicks] = useState<PremiumPick[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const isPremium = isSignedIn && isPremiumUser(user);
+  const bankroll = parseFloat(user?.privateMetadata?.bankroll as string) || 0;
 
   function formatGameTime(tipoffTime: string) {
     const date = new Date(tipoffTime);
