@@ -112,28 +112,38 @@ export default function Layout({ children }: LayoutProps) {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            {mockUser.isSignedIn ? (
+            {isSignedIn ? (
               <div className="flex items-center space-x-3">
-                {mockUser.isPremium && (
+                {isPremium && (
                   <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue">
-                    Premium
+                    {isAdmin ? 'Admin' : 'Premium'}
                   </Badge>
                 )}
-                <Button variant="outline" size="sm">
-                  Sign Out
-                </Button>
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "h-8 w-8",
+                      userButtonPopoverCard: "bg-card border border-border",
+                      userButtonPopoverActionButton: "text-foreground hover:bg-accent"
+                    }
+                  }}
+                />
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm">
-                  Sign In
-                </Button>
-                <Button 
-                  size="sm"
-                  className="bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90"
-                >
-                  Go Premium
-                </Button>
+                <SignInButton mode="modal">
+                  <Button variant="ghost" size="sm">
+                    Sign In
+                  </Button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <Button
+                    size="sm"
+                    className="bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90"
+                  >
+                    Go Premium
+                  </Button>
+                </SignUpButton>
               </div>
             )}
           </div>
