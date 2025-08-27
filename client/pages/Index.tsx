@@ -419,9 +419,9 @@ export default function Index() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="text-center hover:shadow-lg transition-shadow">
+          <Card className="text-center hover:shadow-xl transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm border-border/50 group">
             <CardHeader>
-              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mb-4">
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                 <TrendingUp className="h-8 w-8 text-white" />
               </div>
               <CardTitle>Free Picks</CardTitle>
@@ -434,14 +434,14 @@ export default function Index() {
             </CardContent>
           </Card>
 
-          <Card className="text-center hover:shadow-lg transition-shadow border-brand-purple/20">
+          <Card className="text-center hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-brand-purple/20 hover:border-brand-purple/40 backdrop-blur-sm group">
             <CardHeader>
-              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-brand-purple to-brand-blue rounded-full flex items-center justify-center mb-4">
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-brand-purple to-brand-blue rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Crown className="h-8 w-8 text-white" />
               </div>
               <CardTitle className="flex items-center justify-center gap-2">
                 Premium Picks
-                <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-xs">
+                <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-white border-0 text-xs">
                   Popular
                 </Badge>
               </CardTitle>
@@ -454,12 +454,12 @@ export default function Index() {
             </CardContent>
           </Card>
 
-          <Card className="text-center hover:shadow-lg transition-shadow">
+          <Card className="text-center hover:shadow-xl transition-all duration-300 hover:scale-[1.02] backdrop-blur-sm border-border/50 group">
             <CardHeader>
-              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mb-4">
+              <div className="w-16 h-16 mx-auto bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Shield className="h-8 w-8 text-white" />
               </div>
-              <CardTitle>Admin-Backed Data</CardTitle>
+              <CardTitle>Expert Analysis</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
