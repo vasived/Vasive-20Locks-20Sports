@@ -66,7 +66,6 @@ export default function App() {
                     </RequireAuth>
                   }
                 />
-                <Route path="/schedule" element={<Schedule />} />
                 <Route path="/research/:gameId" element={<Research />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
