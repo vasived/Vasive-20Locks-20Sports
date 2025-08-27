@@ -344,7 +344,7 @@ export default function PremiumPicks() {
                         {pick.confidence}%
                       </span>
                     </div>
-                    <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-xs">
+                    <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-white border-0 text-xs">
                       Premium
                     </Badge>
                   </div>
