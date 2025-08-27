@@ -272,8 +272,6 @@ export default function FreePicks() {
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
                       <span>{pick.gameShort || pick.game}</span>
-                      <span>•</span>
-                      <span>{formatGameTime(pick.tipoff)}</span>
                     </div>
                   </div>
 
@@ -337,7 +335,6 @@ export default function FreePicks() {
                   {expandedPick === pick.id && (
                     <div className="pt-2 border-t border-border">
                       <div className="text-xs text-muted-foreground space-y-1">
-                        <div>Venue: {pick.venue || "TBD"}</div>
                         {pick.odds && <div>Odds: {pick.odds}</div>}
                         {pick.sportsbook && (
                           <div>Sportsbook: {pick.sportsbook}</div>
