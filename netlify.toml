@@ -1,12 +1,13 @@
 [build]
-  command = "npm run build:client"
+  command = "npm run build"
   functions = "netlify/functions"
   publish = "dist/spa"
 
 
 [functions]
-  external_node_modules = ["express"]
+  external_node_modules = ["express", "pg", "cors", "dotenv", "zod"]
   node_bundler = "esbuild"
+  included_files = ["node_modules/**"]
   
 [[redirects]]
   force = true
