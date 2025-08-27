@@ -56,7 +56,9 @@ export default function PremiumPicks() {
   const [loading, setLoading] = useState(true);
 
   const isPremium = isSignedIn && isPremiumUser(user);
-  const bankroll = parseFloat(user?.privateMetadata?.bankroll as string) || 0;
+  const bankroll = parseFloat(
+    (user?.privateMetadata?.bankroll || user?.unsafeMetadata?.bankroll) as string
+  ) || 0;
 
   useEffect(() => {
     const fetchPremiumPicks = async () => {
