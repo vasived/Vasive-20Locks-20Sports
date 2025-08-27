@@ -105,6 +105,36 @@ export default function PremiumPicks() {
   const isPremium = isSignedIn && isPremiumUser(user);
   const bankroll = parseFloat(user?.privateMetadata?.bankroll as string) || 0;
 
+  useEffect(() => {
+    const fetchPremiumPicks = async () => {
+      if (!isPremium) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await fetch('/api/picks/premium');
+        if (response.ok) {
+          const data = await response.json();
+          setPremiumPicks(data.picks || []);
+        }
+      } catch (error) {
+        console.error('Error fetching premium picks:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPremiumPicks();
+  }, [isPremium]);
+
+  function formatStake(stakePercent: number): string {
+    if (bankroll <= 0) return `${stakePercent}%`;
+    const amount = (bankroll * stakePercent) / 100;
+    return `$${amount.toFixed(2)}`;
+  }
+
   function formatGameTime(tipoffTime: string) {
     const date = new Date(tipoffTime);
     return (
@@ -132,6 +162,105 @@ export default function PremiumPicks() {
           </Badge>
         );
     }
+  }
+
+  // If user is not premium, show Discord invitation
+  if (!isPremium) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto text-center">
+          {/* Premium Locked Header */}
+          <div className="mb-8">
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <Lock className="h-12 w-12 text-brand-purple" />
+              <Crown className="h-12 w-12 text-brand-blue" />
+            </div>
+            <h1 className="text-4xl font-bold mb-2">Premium Picks</h1>
+            <Badge className="bg-gradient-to-r from-brand-purple to-brand-blue text-lg px-4 py-2">
+              <Lock className="h-4 w-4 mr-2" />
+              Premium Access Required
+            </Badge>
+          </div>
+
+          {/* Discord Invitation Card */}
+          <Card className="border-2 border-brand-purple/20 bg-gradient-to-br from-brand-purple/5 to-brand-blue/5 shadow-2xl">
+            <CardHeader className="pb-6">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-purple to-brand-blue flex items-center justify-center">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <CardTitle className="text-2xl">Join Our Premium Discord Community</CardTitle>
+              <p className="text-muted-foreground text-lg">
+                Get exclusive access to premium picks, advanced analytics, and real-time discussions with our expert analysts.
+              </p>
+            </CardHeader>
+
+            <CardContent className="space-y-6">
+              {/* Premium Features Preview */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <BarChart3 className="h-8 w-8 mx-auto mb-2 text-brand-purple" />
+                  <h3 className="font-semibold">Advanced Analytics</h3>
+                  <p className="text-sm text-muted-foreground">Detailed trends, matchup data, and predictive modeling</p>
+                </div>
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <Target className="h-8 w-8 mx-auto mb-2 text-brand-blue" />
+                  <h3 className="font-semibold">Confidence Ratings</h3>
+                  <p className="text-sm text-muted-foreground">AI-powered confidence percentages for every pick</p>
+                </div>
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <DollarSign className="h-8 w-8 mx-auto mb-2 text-brand-cyan" />
+                  <h3 className="font-semibold">Bankroll Management</h3>
+                  <p className="text-sm text-muted-foreground">Optimal stake sizing and risk management</p>
+                </div>
+                <div className="text-center p-4 bg-background/50 rounded-lg">
+                  <Zap className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <h3 className="font-semibold">Real-time Updates</h3>
+                  <p className="text-sm text-muted-foreground">Live picks, line movements, and injury reports</p>
+                </div>
+              </div>
+
+              {/* Discord CTA */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold">Ready to become premium?</h3>
+                <p className="text-muted-foreground">
+                  Join our Discord community to unlock premium picks and connect with fellow bettors and analysts.
+                </p>
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-brand-purple to-brand-blue hover:from-brand-purple/90 hover:to-brand-blue/90 text-white shadow-lg w-full sm:w-auto"
+                  asChild
+                >
+                  <a
+                    href="https://discord.gg/V7Yg3BhrFU"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center"
+                  >
+                    <Users className="mr-2 h-5 w-5" />
+                    Join the Discord to Become Premium
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+              </div>
+
+              {/* Additional Info */}
+              <div className="pt-4 border-t border-border">
+                <p className="text-sm text-muted-foreground">
+                  Already have premium access?{" "}
+                  {!isSignedIn ? (
+                    <span>Sign in to view your premium picks.</span>
+                  ) : (
+                    <span>Contact support if you believe this is an error.</span>
+                  )}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   return (
