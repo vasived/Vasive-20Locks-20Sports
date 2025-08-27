@@ -36,16 +36,28 @@ const App = () => (
         <BrowserRouter>
           <Layout>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/free-picks" element={<FreePicks />} />
-              <Route path="/premium-picks" element={<PremiumPicks />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/research/:gameId" element={<Research />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/free-picks" element={<FreePicks />} />
+            <Route path="/premium-picks" element={
+              <RequirePremium>
+                <PremiumPicks />
+              </RequirePremium>
+            } />
+            <Route path="/admin" element={
+              <RequireAdmin>
+                <Admin />
+              </RequireAdmin>
+            } />
+            <Route path="/settings" element={
+              <RequireAuth>
+                <Settings />
+              </RequireAuth>
+            } />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/research/:gameId" element={<Research />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
           </Layout>
         </BrowserRouter>
       </TooltipProvider>
