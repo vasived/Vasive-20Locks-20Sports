@@ -103,7 +103,7 @@ export default function Layout({ children }: LayoutProps) {
                 >
                   <item.icon className="h-4 w-4" />
                   <span>{item.name}</span>
-                  {item.premium && isPremium && (
+                  {item.isPremiumTab && isPremium && (
                     <Badge variant="secondary" className="text-xs">
                       Premium
                     </Badge>
@@ -186,7 +186,7 @@ export default function Layout({ children }: LayoutProps) {
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.name}</span>
-                    {item.premium && isPremium && (
+                    {item.isPremiumTab && isPremium && (
                       <Badge variant="secondary" className="text-xs">
                         Premium
                       </Badge>
