@@ -49,22 +49,17 @@ export default function Layout({ children }: LayoutProps) {
   const isPremium = isSignedIn && isPremiumUser(user);
 
   const navigation = [
-    { name: "Home", href: "/", icon: Home, public: true },
-    { name: "Free Picks", href: "/free-picks", icon: TrendingUp, public: true },
-    {
-      name: "Premium Picks",
-      href: "/premium-picks",
-      icon: Lock,
-      premium: true,
-    },
-    { name: "Settings", href: "/settings", icon: Settings, auth: true },
+    { name: "Home", href: "/", icon: Home, alwaysVisible: true },
+    { name: "Free Picks", href: "/free-picks", icon: TrendingUp, alwaysVisible: true },
+    { name: "Premium Picks", href: "/premium-picks", icon: Lock, alwaysVisible: true, isPremiumTab: true },
+    { name: "Settings", href: "/settings", icon: Settings, alwaysVisible: true },
     { name: "Admin", href: "/admin", icon: Shield, admin: true },
   ];
 
   const filteredNavigation = navigation.filter((item) => {
-    if (item.public) return true;
-    if (item.auth && isSignedIn) return true;
-    if (item.premium && isSignedIn && isPremium) return true;
+    // Show main navigation tabs to everyone
+    if (item.alwaysVisible) return true;
+    // Only show admin tab to actual admins
     if (item.admin && isSignedIn && isAdmin) return true;
     return false;
   });
