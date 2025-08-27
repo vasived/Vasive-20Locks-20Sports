@@ -334,8 +334,6 @@ export default function PremiumPicks() {
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
                       <span>{pick.game}</span>
-                      <span>•</span>
-                      <span>{pick.tipoff}</span>
                     </div>
                   </div>
 
