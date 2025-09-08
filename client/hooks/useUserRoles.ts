@@ -1,4 +1,5 @@
 import { useUser } from "@clerk/clerk-react";
+import { UserPublicMetadata, UserPrivateMetadata } from "@/lib/clerk";
 import { useMemo } from "react";
 
 // Helper function to check user roles
@@ -12,9 +13,13 @@ function hasRole(user: any, role: string): boolean {
 
 export function useUserRoles() {
   const { isSignedIn, user } = useUser();
+  const typedUser = user as unknown as {
+    publicMetadata?: UserPublicMetadata;
+    privateMetadata?: UserPrivateMetadata;
+  };
 
   const roles = useMemo(() => {
-    if (!isSignedIn || !user) {
+    if (!isSignedIn || !typedUser) {
       return {
         isSignedIn: false,
         isAdmin: false,
@@ -24,21 +29,21 @@ export function useUserRoles() {
       };
     }
 
-    const isAdmin = hasRole(user, "admin");
-    const isPremium = hasRole(user, "premium") || isAdmin;
+    const isAdmin = hasRole(typedUser, "admin");
+    const isPremium = hasRole(typedUser, "premium") || isAdmin;
 
     // Get bankroll from private metadata
-    const bankroll = (user.privateMetadata?.bankroll as number) || 0;
+    const bankroll = (typedUser.privateMetadata?.bankroll as number) || 0;
 
     return {
       isSignedIn: true,
       isAdmin,
       isPremium,
-      hasRole: (role: string) => hasRole(user, role),
+      hasRole: (role: string) => hasRole(typedUser, role),
       bankroll,
-      user,
+      user: typedUser as any,
     };
-  }, [isSignedIn, user]);
+  }, [isSignedIn, typedUser]);
 
   return roles;
 }

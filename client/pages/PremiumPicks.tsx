@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/clerk-react";
+import { UserPublicMetadata, UserPrivateMetadata } from "@/lib/clerk";
 import {
   TrendingUp,
   Star,
@@ -51,15 +52,20 @@ function isPremiumUser(user: any): boolean {
 
 export default function PremiumPicks() {
   const { isSignedIn, user } = useUser();
+  const typedUser = user as unknown as {
+    publicMetadata?: UserPublicMetadata;
+    privateMetadata?: UserPrivateMetadata;
+    unsafeMetadata?: Record<string, unknown>;
+  };
   const [expandedPick, setExpandedPick] = useState<string | null>(null);
   const [premiumPicks, setPremiumPicks] = useState<PremiumPick[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const isPremium = isSignedIn && isPremiumUser(user);
+  const isPremium = isSignedIn && isPremiumUser(typedUser);
   const bankroll =
     parseFloat(
-      (user?.privateMetadata?.bankroll ||
-        user?.unsafeMetadata?.bankroll) as string,
+      (typedUser.privateMetadata?.bankroll ||
+        (typedUser as any).unsafeMetadata?.bankroll) as string,
     ) || 0;
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
+import { UserPublicMetadata, UserPrivateMetadata } from "@/lib/clerk";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +52,7 @@ function hasRole(user: any, role: string): boolean {
 }
 
 interface ExtendedPick extends Pick {
+  tier: "free" | "premium";
   result?: "Pending" | "Win" | "Loss";
   stakePercent?: number;
   analytics?: string;
@@ -58,6 +60,11 @@ interface ExtendedPick extends Pick {
 
 export default function Admin() {
   const { isSignedIn, user } = useUser();
+  const typedUser = user as unknown as {
+    id: string;
+    publicMetadata?: UserPublicMetadata;
+    privateMetadata?: UserPrivateMetadata;
+  };
   const [picks, setPicks] = useState<ExtendedPick[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -91,7 +98,7 @@ export default function Admin() {
     sportsbook: "DraftKings",
   });
 
-  const isAdmin = isSignedIn && hasRole(user, "admin");
+  const isAdmin = isSignedIn && hasRole(typedUser, "admin");
 
   useEffect(() => {
     if (isAdmin) {
@@ -140,7 +147,7 @@ export default function Admin() {
     try {
       const createData: CreatePickRequest = {
         ...(formData as CreatePickRequest),
-        createdByUserId: user!.id,
+        createdByUserId: typedUser!.id,
       };
 
       const response = await fetch("/api/picks", {
