@@ -169,13 +169,32 @@ export const updatePick: RequestHandler = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const updateFields = [];
-    const values = [];
+    const updateFields = [] as string[];
+    const values: any[] = [];
     let paramCount = 1;
+
+    const columnMap: Record<string, string> = {
+      sportCode: "sport_code",
+      gameId: "game_id",
+      propType: "prop_type",
+      propLine: "prop_line",
+      analysisShort: "analysis_short",
+      analysisLong: "analysis_long",
+      confidencePct: "confidence_pct",
+      stakePct: "stake_pct",
+      stakePercent: "stake_pct",
+      odds: "odds",
+      sportsbook: "sportsbook",
+      result: "result",
+      tier: "tier",
+      player: "player",
+      side: "side",
+    };
 
     for (const [key, value] of Object.entries(updates)) {
       if (value !== undefined) {
-        updateFields.push(`${key} = $${paramCount}`);
+        const column = columnMap[key] ?? key;
+        updateFields.push(`${column} = $${paramCount}`);
         values.push(value);
         paramCount++;
       }

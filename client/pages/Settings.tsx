@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUser, SignInButton } from "@clerk/clerk-react";
+import { UserPublicMetadata, UserPrivateMetadata } from "@/lib/clerk";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,11 @@ function isPremiumUser(user: any): boolean {
 
 export default function Settings() {
   const { isSignedIn, user } = useUser();
+  const typedUser = user as unknown as {
+    publicMetadata?: UserPublicMetadata;
+    privateMetadata?: UserPrivateMetadata;
+    unsafeMetadata?: Record<string, unknown>;
+  };
   const [bankroll, setBankroll] = useState("");
   const [originalBankroll, setOriginalBankroll] = useState("");
   const [saving, setSaving] = useState(false);
@@ -44,22 +50,23 @@ export default function Settings() {
     message: string;
   } | null>(null);
 
-  const isPremium = isSignedIn && isPremiumUser(user);
-  const isAdmin = isSignedIn && hasRole(user, "admin");
+  const isPremium = isSignedIn && isPremiumUser(typedUser);
+  const isAdmin = isSignedIn && hasRole(typedUser, "admin");
 
   useEffect(() => {
     // Check both privateMetadata and unsafeMetadata for bankroll
     const bankrollValue =
-      user?.privateMetadata?.bankroll || user?.unsafeMetadata?.bankroll;
+      typedUser.privateMetadata?.bankroll ||
+      (typedUser as any).unsafeMetadata?.bankroll;
     if (bankrollValue) {
       const currentBankroll = bankrollValue.toString();
       setBankroll(currentBankroll);
       setOriginalBankroll(currentBankroll);
     }
-  }, [user]);
+  }, [typedUser]);
 
   const handleSaveBankroll = async () => {
-    if (!user || saving) return; // Prevent multiple concurrent requests
+    if (!typedUser || saving) return; // Prevent multiple concurrent requests
 
     const bankrollValue = parseFloat(bankroll);
     if (isNaN(bankrollValue) || bankrollValue < 0) {
@@ -76,7 +83,7 @@ export default function Settings() {
     const attemptUpdate = async (retryCount = 0): Promise<void> => {
       try {
         // Reload user object to ensure fresh state
-        await user.reload();
+        await (typedUser as any).reload();
 
         // Wait a bit longer to ensure the reload completes
         await new Promise((resolve) => setTimeout(resolve, 200));
@@ -89,7 +96,7 @@ export default function Settings() {
               bankroll: bankrollValue,
             },
           };
-          await user.update(updateData);
+          await (typedUser as any).update(updateData);
         } catch (privateError) {
           console.warn(
             "Private metadata update failed, trying unsafeMetadata:",
@@ -101,7 +108,7 @@ export default function Settings() {
               bankroll: bankrollValue,
             },
           };
-          await user.update(updateData);
+          await (typedUser as any).update(updateData);
         }
 
         setOriginalBankroll(bankroll);
@@ -154,8 +161,8 @@ export default function Settings() {
   const currentBankrollValue =
     parseFloat(originalBankroll) ||
     parseFloat(
-      user?.privateMetadata?.bankroll?.toString() ||
-        user?.unsafeMetadata?.bankroll?.toString() ||
+      typedUser.privateMetadata?.bankroll?.toString() ||
+        (typedUser as any).unsafeMetadata?.bankroll?.toString() ||
         "0",
     );
 
@@ -247,7 +254,7 @@ export default function Settings() {
                       Name
                     </Label>
                     <div className="font-medium">
-                      {user.firstName} {user.lastName}
+                      {(typedUser as any).firstName} {(typedUser as any).lastName}
                     </div>
                   </div>
                   <div>
@@ -255,7 +262,7 @@ export default function Settings() {
                       Email
                     </Label>
                     <div className="font-medium">
-                      {user.primaryEmailAddress?.emailAddress}
+                      {(typedUser as any).primaryEmailAddress?.emailAddress}
                     </div>
                   </div>
                   <div>
@@ -283,7 +290,7 @@ export default function Settings() {
                       Member Since
                     </Label>
                     <div className="font-medium">
-                      {new Date(user.createdAt!).toLocaleDateString()}
+                      {new Date((typedUser as any).createdAt!).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
@@ -547,7 +554,7 @@ export default function Settings() {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Member Since:</span>
                     <span className="font-medium">
-                      {new Date(user.createdAt!).toLocaleDateString()}
+                      {new Date((typedUser as any).createdAt!).toLocaleDateString()}
                     </span>
                   </div>
                 </CardContent>
