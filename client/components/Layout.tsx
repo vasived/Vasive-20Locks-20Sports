@@ -152,12 +152,12 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <SignInButton mode="modal">
+                <SignInButton mode="modal" asChild>
                   <Button variant="ghost" size="sm">
                     Sign In
                   </Button>
                 </SignInButton>
-                <SignUpButton mode="modal">
+                <SignUpButton mode="modal" asChild>
                   <Button
                     size="sm"
                     className="bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90"
@@ -231,7 +231,7 @@ export default function Layout({ children }: LayoutProps) {
                         {user?.primaryEmailAddress?.emailAddress}
                       </div>
                     </div>
-                    <SignOutButton>
+                    <SignOutButton asChild>
                       <Button variant="outline" size="sm" className="w-full">
                         Sign Out
                       </Button>
@@ -239,12 +239,12 @@ export default function Layout({ children }: LayoutProps) {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <SignInButton mode="modal">
+                    <SignInButton mode="modal" asChild>
                       <Button variant="ghost" size="sm" className="w-full">
                         Sign In
                       </Button>
                     </SignInButton>
-                    <SignUpButton mode="modal">
+                    <SignUpButton mode="modal" asChild>
                       <Button
                         size="sm"
                         className="w-full bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90"

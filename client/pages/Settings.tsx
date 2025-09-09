@@ -202,7 +202,7 @@ export default function Settings() {
               </div>
 
               <div className="space-y-3">
-                <SignInButton mode="modal">
+                <SignInButton mode="modal" asChild>
                   <Button
                     size="lg"
                     className="w-full bg-gradient-to-r from-brand-blue to-brand-purple hover:from-brand-blue/90 hover:to-brand-purple/90"
